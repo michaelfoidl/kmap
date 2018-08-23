@@ -1,0 +1,30 @@
+image: openjdk:8-jdk
+
+before_script:
+  - export ENV=gitlab-ci
+  - chmod +x ./gradlew
+
+stages:
+  - build
+  - test
+  - publish
+
+build:
+  stage: build 
+  script:
+    - ./gradlew build
+  artifacts:
+    paths:
+    - build/libs/
+
+tests:
+  stage: test
+  script:
+    - ./gradlew test
+
+publish:
+  stage: publish
+  only:
+    - master
+  script:
+    - ./gradlew bintrayUpload -Dbintray.user=michaelfoidl -Dbintray.key=$BINTRAY_KEY

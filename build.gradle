@@ -1,5 +1,7 @@
 apply plugin: 'kotlin'
 apply plugin: 'idea'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
 
 buildscript {
     ext {
@@ -7,10 +9,13 @@ buildscript {
 
         kluent_version = '1.40'
         junit_version = '5.2.0'
+
+        bintray_version = '1.8.4'
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintray_version"
     }
 
     repositories {
@@ -57,13 +62,91 @@ task integrationTest(type: Test) {
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Spftware License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "michaelfoidl"
+            name "Michael Foidl"
+            email "foidl.michael@gmail.com"
+        }
+    }
+
+    scm {
+        url "https://gitlab.com/michaelfoidl/kmap.git"
+    }
+}
+
+publishing {
+    publications {
+        mavenPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+            groupId 'at.michaelfoidl'
+            artifactId 'kmap'
+            version '0.1'
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'A simple object-to-object mapping library written in Kotlin.')
+                root.appendNode('name', 'kmap')
+                root.appendNode('url', 'https://gitlab.com/michaelfoidl/kmap')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
-    testImplementation "org.amshove.kluent:kluent-android:$kluent_version"
+    testImplementation "org.amshove.kluent:kluent:$kluent_version"
 
     integrationTestCompile sourceSets.test.output
+}
+
+bintray {
+    user = System.getProperty('bintray.user')
+    key = System.getProperty('bintray.key')
+    publications = ['mavenPublication']
+    publish = true
+    pkg {
+        repo = 'kmap'
+        name = 'kmap'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://gitlab.com/michaelfoidl/kmap.git'
+        version {
+            name = '0.1'
+            desc = '0.1'
+            released = new Date()
+        }
+    }
 }

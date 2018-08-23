@@ -1,0 +1,22 @@
+image: openjdk:8-jdk
+
+before_script:
+  - export ENV=gitlab-ci
+  - chmod +x ./gradlew
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build 
+  script:
+    - ./gradlew build
+  artifacts:
+    paths:
+    - build/libs/
+
+tests:
+  stage: test
+  script:
+    - ./gradlew test

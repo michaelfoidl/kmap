@@ -5,6 +5,8 @@ apply plugin: 'maven-publish'
 
 buildscript {
     ext {
+        VERSION = '0.1'
+
         kotlin_version = '1.2.61'
 
         kluent_version = '1.40'
@@ -42,6 +44,8 @@ sourceSets {
         }
     }
 }
+
+version = VERSION
 
 idea {
     module {
@@ -89,7 +93,6 @@ def pomConfig = {
         developer {
             id "michaelfoidl"
             name "Michael Foidl"
-            email "foidl.michael@gmail.com"
         }
     }
 
@@ -110,7 +113,7 @@ publishing {
             }
             groupId 'at.michaelfoidl'
             artifactId 'kmap'
-            version '0.1'
+            version VERSION
             pom.withXml {
                 def root = asNode()
                 root.appendNode('description', 'A simple object-to-object mapping library written in Kotlin.')
@@ -144,8 +147,8 @@ bintray {
         licenses = ['Apache-2.0']
         vcsUrl = 'https://gitlab.com/michaelfoidl/kmap.git'
         version {
-            name = '0.1'
-            desc = '0.1'
+            name = VERSION
+            desc = "kmap library version $VERSION"
             released = new Date()
         }
     }

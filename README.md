@@ -22,37 +22,33 @@ The most common use case is converting a source property to a target property. T
 
 In the first scenario, where `id` and `string` are both properties of `SourceTestObject` and `TargetTestObject`, the `MappingDefintion` can be defined as following:
 
-<code>
-    MappingDefinition(SourceTestObject::class, TargetTestObject::class)
-        .convert({ it::id }, { it::id })
-        .convert({ it::string }, { it::string })
-</code>
+```
+MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+    .convert({ it::id }, { it::id })
+    .convert({ it::string }, { it::string })
+```
 
 Since the source `id` and the target `id` are of the same type, a simple cast is enough.
 
 However, when the target `string` should contain the value of the source `id`, you have to use a converter:
 
-<code>
-
-    MappingDefinition(SourceTestObject::class, TargetTestObject::class)
-        .convert({ it::id },
-                { it::string },
-                { it!!.toString() })
-
-</code>
+```
+MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+    .convert({ it::id },
+            { it::string },
+            { it!!.toString() })
+```
 
 Here, the third lambda expression takes the source value and returns the result as the target type.
 
 For the case that the property to be mapped is of a complex type that has to be mapped by itself, you should use submappers:
 
-<code>
-
-    MappingDefinition(SourceTestObject::class, TargetTestObject::class)
-        .convert({ it::complexObject },
-                { it::complexObject },
-                { complexObjectMapper })
-
-</code>
+```
+MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+    .convert({ it::complexObject },
+            { it::complexObject },
+            { complexObjectMapper })
+```
 
 `complexObjectMapper` is capable of mapping the source type of `complexObject` to the target type. It is itself defined using a `MappingDefinition`. By using this technique, you can also realize circular references.
 
@@ -60,13 +56,11 @@ For the case that the property to be mapped is of a complex type that has to be 
 
 When your target type has a property that does not exist in the source type or if it is computed out of several source properties, you can add it:
 
-<code>
-
-    MappingDefinition(SourceTestObject::class, TargetTestObject::class)
-        .add({ it::addedString },
-                { "test" })
-
-</code>
+```
+MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+    .add({ it::addedString },
+            { "test" })
+```
 
 All mapped objects' `addedString` property will have the value "test". The second lambda expression holds the source object and returns any value that is of the target type.
 
@@ -74,24 +68,20 @@ All mapped objects' `addedString` property will have the value "test". The secon
 
 Removing or ignoring properties works pretty much the same as adding properties, however this time the source object is effected.
 
-<code>
-
-    MappingDefinition(SourceTestObject::class, TargetTestObject::class)
-        .ignore({ it::ignoredString })
-
-</code>
+```
+MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+    .ignore({ it::ignoredString })
+```
 
 In the above example, the property `ignoredString` of the source object is ignored. Removing a property does also offer you the possibility to do anything else that might be necessary when doing so:
 
-<code>
-
-    MappingDefinition(SourceTestObject::class, TargetTestObject::class)
-        .remove({ it::removedString },
-        {
-            // do something important
-        })
-
-</code>
+```
+MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+    .remove({ it::removedString },
+    {
+        // do something important
+    })
+```
 
 Therefore, ignoring a property is just a special case of removing it without doing anything else.
 
@@ -99,11 +89,9 @@ Therefore, ignoring a property is just a special case of removing it without doi
 
 In order to make sure that the mapping process will work smoothly, you should validate every `MappingDefinition` before using it (in a test):
 
-<code>
-
-    val result = mappingDefinition.validate(SourceTestObject::class, TargetTestObject::class)
-
-</code>
+```
+val result = mappingDefinition.validate(SourceTestObject::class, TargetTestObject::class)
+```
 
 The resulting `ValidationResult` can be successful, return a warning or an error. A warning suggests that for instance a source property is not converted, but also not ignored or removed or that a target property is not converted or added (but nullable).
 If the above target property is not nullable, validation returns an error since mapping would cause a `NullPointerException`. The validation also fails when either the source type or the target type does not fulfil the requirements for being mappable.
@@ -112,11 +100,9 @@ If the above target property is not nullable, validation returns an error since 
 
 When you have successfully defined a `Mapper` with a `MappingDefinition`, mapping is this easy:
 
-<code>
-
-    val result = mapper.map<TargetTestObject>(sourceObject)
-
-</code>
+```
+val result = mapper.map<TargetTestObject>(sourceObject)
+```
 
 ## Bug Reporting
 

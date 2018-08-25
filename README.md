@@ -23,11 +23,9 @@ The most common use case is converting a source property to a target property. T
 In the first scenario, where `id` and `string` are both properties of `SourceTestObject` and `TargetTestObject`, the `MappingDefintion` can be defined as following:
 
 <code>
-
     MappingDefinition(SourceTestObject::class, TargetTestObject::class)
         .convert({ it::id }, { it::id })
         .convert({ it::string }, { it::string })
-
 </code>
 
 Since the source `id` and the target `id` are of the same type, a simple cast is enough.

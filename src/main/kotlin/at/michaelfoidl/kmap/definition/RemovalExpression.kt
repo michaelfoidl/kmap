@@ -11,7 +11,7 @@ class RemovalExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?>(
         private val actionFunction: (SourcePropertyT?) -> Unit
 ) : MappingExpression<SourceT, TargetT>() {
 
-    override fun doFetch(source: SourceT, cache: MappingCache) {
+    override fun doConvert(source: SourceT, cache: MappingCache) {
         val sourceProperty = this.sourcePropertyFunction.invoke(source)
 
         ReflectionUtilities.ensureThatPropertyExists(source::class, sourceProperty)

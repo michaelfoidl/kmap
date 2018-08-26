@@ -8,21 +8,21 @@ import kotlin.reflect.KProperty
 
 abstract class MappingExpression<SourceT : Any, TargetT : Any> {
 
-    private var isFetched: Boolean = false
+    private var isConverted: Boolean = false
 
-    fun fetch(source: SourceT, cache: MappingCache) {
-        doFetch(source, cache)
-        isFetched = true
+    fun convert(source: SourceT, cache: MappingCache) {
+        doConvert(source, cache)
+        isConverted = true
     }
 
     fun execute(target: TargetT) {
-        if (!isFetched) {
-            throw MappingException("Mapping can only be executed after fetching. Call fetch() first.")
+        if (!isConverted) {
+            throw MappingException("Mapping can only be executed after converting. Call convert() first.")
         }
         doExecute(target)
     }
 
-    protected abstract fun doFetch(source: SourceT, cache: MappingCache)
+    protected abstract fun doConvert(source: SourceT, cache: MappingCache)
 
     protected abstract fun doExecute(target: TargetT)
 

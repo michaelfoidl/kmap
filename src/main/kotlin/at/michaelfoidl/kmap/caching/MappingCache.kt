@@ -13,7 +13,7 @@ class MappingCache {
         }
         return if (cachedElement != null) {
             @Suppress("UNCHECKED_CAST")
-            (cachedElement as MappingCacheEntry<SourceT, TargetT>).target
+            (cachedElement as MappingCacheEntry<SourceT, TargetT?>).target
         } else {
             null
         }

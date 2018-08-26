@@ -17,12 +17,12 @@ class ConcreteMapper<SourceT : Any, TargetT : Any>(
     internal var mappingExpressions: ArrayList<MappingExpression<SourceT, TargetT>> = mappingDefinition.mappingExpressions
 
     @PublishedApi
-    internal inline fun <reified MappingTargetT : TargetT> fetch(source: SourceT): Initializable<MappingTargetT?> {
+    internal inline fun <reified MappingTargetT : TargetT> convert(source: SourceT): Initializable<MappingTargetT?> {
         val cached = this.mappingCache.getEntry(source, MappingTargetT::class)
         return if (cached == null) {
             val result = this.mappingCache.createEntryIfNotExists(source, MappingTargetT::class)
             this.mappingExpressions.forEach {
-                it.fetch(source, this.mappingCache)
+                it.convert(source, this.mappingCache)
             }
             result
         } else {
@@ -31,14 +31,12 @@ class ConcreteMapper<SourceT : Any, TargetT : Any>(
     }
 
     @PublishedApi
-    internal inline fun <reified MappingTargetT : TargetT> execute(fetched: Initializable<in MappingTargetT?>) {
-        if (!fetched.isInitialized) {
+    internal inline fun <reified MappingTargetT : TargetT> execute(converted: Initializable<in MappingTargetT?>) {
+        if (!converted.isInitialized) {
             val target = ReflectionUtilities.createNewInstance(MappingTargetT::class)
-            fetched.initialize(target)
-
+            converted.initialize(target)
             this.mappingExpressions.forEach {
-                @Suppress("UNCHECKED_CAST")
-                (it as MappingExpression<SourceT, MappingTargetT>).execute(target)
+                it.execute(target)
             }
         }
     }

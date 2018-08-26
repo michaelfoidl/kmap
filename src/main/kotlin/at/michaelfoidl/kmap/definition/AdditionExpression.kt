@@ -15,7 +15,7 @@ class AdditionExpression<SourceT : Any, TargetT : Any, TargetPropertyT : Any?>(
 
     private var result: TargetPropertyT? = null
 
-    override fun doFetch(source: SourceT, cache: MappingCache) {
+    override fun doConvert(source: SourceT, cache: MappingCache) {
         this.result = targetValueFunction.invoke(source)
     }
 

@@ -25,7 +25,7 @@ class AdditionExpressionTests {
         val cache = MappingCache()
 
         // Act
-        expression.fetch(source, cache)
+        expression.convert(source, cache)
         expression.execute(target)
 
         // Assert
@@ -45,7 +45,7 @@ class AdditionExpressionTests {
         val cache = MappingCache()
 
         val func = {
-            expression.fetch(source, cache)
+            expression.convert(source, cache)
             expression.execute(target)
         }
 
@@ -65,7 +65,7 @@ class AdditionExpressionTests {
         val cache = MappingCache()
 
         val func = {
-            expression.fetch(source, cache)
+            expression.convert(source, cache)
             expression.execute(target)
         }
 

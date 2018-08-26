@@ -12,7 +12,7 @@ abstract class Mapper {
 
     inline fun <reified TargetT : Any> map(source: Any): TargetT {
         val concreteMapper = this.mapperProvider.provideMapper(source::class, TargetT::class, source)
-        val result = concreteMapper.fetch<TargetT>(source)
+        val result = concreteMapper.convert<TargetT>(source)
         concreteMapper.execute(result)
         return result.value!!
     }

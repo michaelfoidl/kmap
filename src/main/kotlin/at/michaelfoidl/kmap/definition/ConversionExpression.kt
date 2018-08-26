@@ -10,7 +10,7 @@ import kotlin.reflect.*
 class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?, TargetPropertyT : Any?>(
         private val sourcePropertyFunction: (SourceT) -> KProperty0<SourcePropertyT?>,
         private val targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
-        private val fetchFunction: (SourcePropertyT?) -> Initializable<TargetPropertyT?>,
+        private val conversionFunction: (SourcePropertyT?) -> Initializable<TargetPropertyT?>,
         private val executionFunction: (Initializable<TargetPropertyT?>) -> Unit
 ) : MappingExpression<SourceT, TargetT>() {
 
@@ -26,19 +26,19 @@ class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?,
     constructor(
             sourcePropertyFunction: (SourceT) -> KProperty0<SourcePropertyT?>,
             targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
-            conversionFunction: ((SourcePropertyT) -> TargetPropertyT?)?,
+            mappingFunction: ((SourcePropertyT) -> TargetPropertyT?)? = null,
             defaultValueFunction: () -> TargetPropertyT? = { null }
     ) : this(
             sourcePropertyFunction,
             targetPropertyFunction,
             { sourceProperty: SourcePropertyT? ->
-                if (conversionFunction == null) {
+                if (mappingFunction == null) {
                     Initializable(sourceProperty as TargetPropertyT)
                 } else {
                     if (sourceProperty == null) {
                         Initializable<TargetPropertyT?>(defaultValueFunction())
                     } else {
-                        Initializable<TargetPropertyT?>(conversionFunction(sourceProperty))
+                        Initializable<TargetPropertyT?>(mappingFunction(sourceProperty))
                     }
                 }
             },
@@ -49,7 +49,7 @@ class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?,
     private lateinit var sourcePropertyName: String
     private lateinit var sourceClassName: String
 
-    override fun doFetch(source: SourceT, cache: MappingCache) {
+    override fun doConvert(source: SourceT, cache: MappingCache) {
         val sourceProperty = this.sourcePropertyFunction.invoke(source)
 
         ReflectionUtilities.ensureThatPropertyExists(source::class, sourceProperty)
@@ -58,7 +58,7 @@ class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?,
         this.sourceClassName = source::class.qualifiedName!!
 
         val value: SourcePropertyT? = sourceProperty.getter.call()
-        this.result = this.fetchFunction(value)
+        this.result = this.conversionFunction(value)
     }
 
     override fun doExecute(target: TargetT) {

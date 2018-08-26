@@ -42,7 +42,7 @@ class MappingDefinition<SourceT : Any, TargetT : Any>(
                     if (sourceProperty == null) {
                         Initializable(null)
                     } else {
-                        mapper.mapperProvider.provideMapper<SourcePropertyT, TargetPropertyT>(this).fetch(sourceProperty)
+                        mapper.mapperProvider.provideMapper<SourcePropertyT, TargetPropertyT>(this).convert(sourceProperty)
                     }
                 },
                 { fetchedValue: Initializable<TargetPropertyT?> ->

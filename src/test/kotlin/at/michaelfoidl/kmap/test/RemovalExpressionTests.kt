@@ -27,7 +27,7 @@ class RemovalExpressionTests {
         val cache = MappingCache()
 
         // Act
-        expression.fetch(source, cache)
+        expression.convert(source, cache)
         expression.execute(target)
 
         // Assert
@@ -47,7 +47,7 @@ class RemovalExpressionTests {
         val cache = MappingCache()
 
         // Act
-        expression.fetch(source, cache)
+        expression.convert(source, cache)
         expression.execute(target)
 
         // Assert
@@ -67,7 +67,7 @@ class RemovalExpressionTests {
         val cache = MappingCache()
 
         val func = {
-            expression.fetch(source, cache)
+            expression.convert(source, cache)
             expression.execute(target)
         }
 

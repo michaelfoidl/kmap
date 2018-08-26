@@ -116,7 +116,7 @@ class MappingDefinitionTests {
         val definition = MappingDefinition(SourceTestObject::class, TargetTestObject::class)
                 .convert({ it::id }, { it::id })
                 .add({ it::string }, { "abc" })
-                .add({ it::additionalProperty }, { it.string.length })
+                .add({ it::additionalProperty }, { it.string.length.toString() })
                 .add({ it::nullableProperty }, { null })
                 .ignore { it::immutableProperty }
 
@@ -133,7 +133,7 @@ class MappingDefinitionTests {
         // Arrange
         val definition = MappingDefinition(SourceTestObject::class, TargetTestObject::class)
                 .convert({ it::id }, { it::id })
-                .convert({ it::string }, { it::additionalProperty }, { it!!.length })
+                .convert({ it::string }, { it::additionalProperty }, { it.length.toString() })
                 .add({ it::nullableProperty }, { null })
                 .ignore { it::immutableProperty }
 
@@ -151,7 +151,7 @@ class MappingDefinitionTests {
         val definition = MappingDefinition(SourceTestObject::class, TargetTestObject::class)
                 .convert({ it::id }, { it::id })
                 .convert({ it::string }, { it::string })
-                .add({ it::additionalProperty }, { it.string.length })
+                .add({ it::additionalProperty }, { it.string.length.toString() })
                 .ignore { it::immutableProperty }
 
         // Act
@@ -185,7 +185,7 @@ class MappingDefinitionTests {
         val definition = MappingDefinition(SourceTestObjectWithoutConstructor::class, TargetTestObject::class)
                 .convert({ it::id }, { it::id })
                 .convert({ it::string }, { it::string })
-                .add({ it::additionalProperty }, { it.string.length })
+                .add({ it::additionalProperty }, { it.string.length.toString() })
                 .add({ it::nullableProperty }, { null })
 
         // Act

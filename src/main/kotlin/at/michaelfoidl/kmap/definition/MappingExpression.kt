@@ -26,7 +26,7 @@ abstract class MappingExpression<SourceT : Any, TargetT : Any> {
 
     protected abstract fun doExecute(target: TargetT)
 
-    abstract fun mapsToProperty(elementClass: KClass<TargetT>, property: KProperty<*>): Boolean
+    internal abstract fun mapsToProperty(elementClass: KClass<TargetT>, property: KProperty<*>): Boolean
 
-    abstract fun mapsFromProperty(elementClass: KClass<SourceT>, property: KProperty<*>): Boolean
+    internal abstract fun mapsFromProperty(elementClass: KClass<SourceT>, property: KProperty<*>): Boolean
 }

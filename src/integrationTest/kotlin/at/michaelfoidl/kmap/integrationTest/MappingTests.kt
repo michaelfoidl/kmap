@@ -57,10 +57,10 @@ class MappingTests {
                 return listOf(
                         MappingDefinition(SourceTestObjectWithCircularReference::class, TargetTestObjectWithCircularReference::class)
                                 .convert({ it::id }, { it::id })
-                                .convertWithMapper({ it::child },
+                                .map({ it::child },
                                         { it::child },
                                         this)
-                                .convertWithMapper({ it::parent },
+                                .map({ it::parent },
                                         { it::parent },
                                         this)
                 )
@@ -94,10 +94,10 @@ class MappingTests {
                 return listOf(
                         MappingDefinition(SourceTestObjectWithCircularReference::class, TargetTestObjectWithCircularReference::class)
                                 .convert({ it::id }, { it::id })
-                                .convertWithMapper({ it::child },
+                                .map({ it::child },
                                         { it::child },
                                         mapper2)
-                                .convertWithMapper({ it::parent },
+                                .map({ it::parent },
                                         { it::parent },
                                         mapper2)
                 )
@@ -109,10 +109,10 @@ class MappingTests {
                 return listOf(
                         MappingDefinition(SourceTestObjectWithCircularReference::class, TargetTestObjectWithCircularReference::class)
                                 .convert({ it::id }, { it::id })
-                                .convertWithMapper({ it::child },
+                                .map({ it::child },
                                         { it::child },
                                         mapper1)
-                                .convertWithMapper(
+                                .map(
                                         { it::parent },
                                         { it::parent },
                                         mapper1)

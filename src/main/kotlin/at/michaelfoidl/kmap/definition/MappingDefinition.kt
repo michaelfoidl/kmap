@@ -7,7 +7,8 @@ import at.michaelfoidl.kmap.validation.ValidationResult
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KProperty
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KProperty0
 import kotlin.reflect.full.memberProperties
 
 
@@ -19,62 +20,55 @@ class MappingDefinition<SourceT : Any, TargetT : Any>(
     @PublishedApi
     internal val mappingExpressions: ArrayList<MappingExpression<SourceT, TargetT>> = ArrayList()
 
-    // TODO convert nullable types
-
-    fun <SourcePropertyT : Any?, TargetPropertyT : Any> convert(
-            source: (SourceT) -> KProperty<SourcePropertyT?>,
-            target: (TargetT) -> KProperty<TargetPropertyT?>,
-            converter: ((SourcePropertyT?) -> TargetPropertyT?)? = null
+    fun <SourcePropertyT : Any, TargetPropertyT : Any> convert(
+            source: (SourceT) -> KProperty0<SourcePropertyT?>,
+            target: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
+            converter: ((SourcePropertyT) -> TargetPropertyT?)? = null,
+            default: (() -> TargetPropertyT?) = { null }
     ): MappingDefinition<SourceT, TargetT> {
-        if (converter == null) {
-            this.mappingExpressions.add(ConversionExpression(source, target))
-        } else {
-            this.mappingExpressions.add(ConversionExpression(source, target, { Initializable(converter(it)) }))
-        }
+        this.mappingExpressions.add(ConversionExpression(source, target, converter, default))
         return this
     }
 
-    // TODO check if nullable types are implemented correctly
-
-    inline fun <reified SourcePropertyT : Any, reified TargetPropertyT : Any> convertWithMapper(
-            noinline source: (SourceT) -> KProperty<SourcePropertyT?>,
-            noinline target: (TargetT) -> KProperty<TargetPropertyT?>,
+    inline fun <reified SourcePropertyT : Any, reified TargetPropertyT : Any> map(
+            noinline source: (SourceT) -> KProperty0<SourcePropertyT?>,
+            noinline target: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
             mapper: Mapper
     ): MappingDefinition<SourceT, TargetT> {
         this.mappingExpressions.add(ConversionExpression(
                 source,
                 target,
-                {
-                    if (it == null) {
+                { sourceProperty: SourcePropertyT? ->
+                    if (sourceProperty == null) {
                         Initializable(null)
                     } else {
-                        mapper.mapperProvider.provideMapper<SourcePropertyT, TargetPropertyT>(this).fetch(it)
+                        mapper.mapperProvider.provideMapper<SourcePropertyT, TargetPropertyT>(this).fetch(sourceProperty)
                     }
                 },
-                {
-                    mapper.mapperProvider.provideMapper<SourcePropertyT, TargetPropertyT>(this).execute(it)
+                { fetchedValue: Initializable<TargetPropertyT?> ->
+                    mapper.mapperProvider.provideMapper<SourcePropertyT, TargetPropertyT>(this).execute(fetchedValue)
                 }))
         return this
     }
 
-    fun <TargetPropertyT : Any?> add(
-            target: (TargetT) -> KProperty<TargetPropertyT?>,
+    fun <TargetPropertyT : Any> add(
+            target: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
             targetValue: (SourceT) -> TargetPropertyT?
     ): MappingDefinition<SourceT, TargetT> {
         this.mappingExpressions.add(AdditionExpression(target, targetValue))
         return this
     }
 
-    fun <SourcePropertyT : Any?> remove(
-            source: (SourceT) -> KProperty<SourcePropertyT?>,
+    fun <SourcePropertyT : Any> remove(
+            source: (SourceT) -> KProperty0<SourcePropertyT?>,
             action: (SourcePropertyT?) -> Unit
     ): MappingDefinition<SourceT, TargetT> {
         this.mappingExpressions.add(RemovalExpression(source, action))
         return this
     }
 
-    fun <SourcePropertyT : Any?> ignore(
-            source: (SourceT) -> KProperty<SourcePropertyT?>
+    fun <SourcePropertyT : Any> ignore(
+            source: (SourceT) -> KProperty0<SourcePropertyT?>
     ): MappingDefinition<SourceT, TargetT> {
         this.mappingExpressions.add(RemovalExpression(source) {})
         return this

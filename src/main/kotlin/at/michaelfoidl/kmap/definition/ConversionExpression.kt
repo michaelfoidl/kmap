@@ -4,37 +4,45 @@ import at.michaelfoidl.kmap.exceptions.MappingException
 import at.michaelfoidl.kmap.ReflectionUtilities
 import at.michaelfoidl.kmap.initializable.Initializable
 import at.michaelfoidl.kmap.caching.MappingCache
-import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KProperty
+import kotlin.reflect.*
 
 
 class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?, TargetPropertyT : Any?>(
-        private val sourcePropertyFunction: (SourceT) -> KProperty<SourcePropertyT?>,
-        private val targetPropertyFunction: (TargetT) -> KProperty<TargetPropertyT?>,
+        private val sourcePropertyFunction: (SourceT) -> KProperty0<SourcePropertyT?>,
+        private val targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
         private val fetchFunction: (SourcePropertyT?) -> Initializable<TargetPropertyT?>,
         private val executionFunction: (Initializable<TargetPropertyT?>) -> Unit
 ) : MappingExpression<SourceT, TargetT>() {
 
     constructor(
-            sourcePropertyFunction: (SourceT) -> KProperty<SourcePropertyT?>,
-            targetPropertyFunction: (TargetT) -> KProperty<TargetPropertyT?>
+            sourcePropertyFunction: (SourceT) -> KProperty0<SourcePropertyT?>,
+            targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>
     ) : this(
             sourcePropertyFunction,
             targetPropertyFunction,
-            { Initializable(it as TargetPropertyT) },
-            {}
+            null
     )
 
     constructor(
-            sourcePropertyFunction: (SourceT) -> KProperty<SourcePropertyT?>,
-            targetPropertyFunction: (TargetT) -> KProperty<TargetPropertyT?>,
-            conversionFunction: (SourcePropertyT?) -> TargetPropertyT?
+            sourcePropertyFunction: (SourceT) -> KProperty0<SourcePropertyT?>,
+            targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
+            conversionFunction: ((SourcePropertyT) -> TargetPropertyT?)?,
+            defaultValueFunction: () -> TargetPropertyT? = { null }
     ) : this(
             sourcePropertyFunction,
             targetPropertyFunction,
-            { Initializable(conversionFunction(it)) },
-            {}
+            { sourceProperty: SourcePropertyT? ->
+                if (conversionFunction == null) {
+                    Initializable(sourceProperty as TargetPropertyT)
+                } else {
+                    if (sourceProperty == null) {
+                        Initializable<TargetPropertyT?>(defaultValueFunction())
+                    } else {
+                        Initializable<TargetPropertyT?>(conversionFunction(sourceProperty))
+                    }
+                }
+            },
+            { _: Initializable<TargetPropertyT?> -> }
     )
 
     private lateinit var result: Initializable<TargetPropertyT?>
@@ -58,15 +66,11 @@ class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?,
 
         ReflectionUtilities.validateThatPropertyExists(target::class, targetProperty)
 
-        if (targetProperty is KMutableProperty<*>) {
-            this.executionFunction(this.result)
-            try {
-                targetProperty.setter.call(this.result.value)
-            } catch (exception: Exception) {
-                throw MappingException("Property '" + this.sourcePropertyName + "' of " + this.sourceClassName + " could not be mapped to property '" + targetProperty.name + "' of " + target::class.qualifiedName + " due to conversion issues.", exception)
-            }
-        } else {
-            throw MappingException("Property '" + targetProperty.name + "' of " + target::class.qualifiedName + " is immutable and therefore could not be set.")
+        this.executionFunction(this.result)
+        try {
+            targetProperty.setter.call(this.result.value)
+        } catch (exception: Exception) {
+            throw MappingException("Property '" + this.sourcePropertyName + "' of " + this.sourceClassName + " could not be mapped to property '" + targetProperty.name + "' of " + target::class.qualifiedName + " due to conversion issues.", exception)
         }
     }
 

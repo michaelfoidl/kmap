@@ -33,54 +33,13 @@ class ConversionExpressionTests {
     }
 
     @Test
-    fun conversionExpressionWithFakeProperty_mapping_shouldThrowException() {
-
-        // Arrange
-        val expression = ConversionExpression<SourceTestObject, TargetTestObject, Int, Int?>(
-                { String::length },
-                { it::nullableProperty }
-        )
-        val source = SourceTestObject("string", 1)
-        val target = TargetTestObject("abc", 0, "def")
-        val cache = MappingCache()
-
-        val func = {
-            expression.fetch(source, cache)
-            expression.execute(target)
-        }
-
-        // Assert
-        func shouldThrow MappingException::class
-    }
-
-    @Test
-    fun conversionExpressionWithImmutableProperty_mapping_shouldThrowException() {
-        // Arrange
-        val expression = ConversionExpression<SourceTestObject, TargetTestObject, Long, Int>(
-                { it::id },
-                { it::immutableProperty }
-        )
-        val source = SourceTestObject("string", 1)
-        val target = TargetTestObject("abc", 0, "def")
-        val cache = MappingCache()
-
-        val func = {
-            expression.fetch(source, cache)
-            expression.execute(target)
-        }
-
-        // Assert
-        func shouldThrow MappingException::class
-    }
-
-    @Test
     fun validConversionExpressionWithConverter_mapping_shouldBeSuccessful() {
 
         // Arrange
         val expression = ConversionExpression<SourceTestObject, TargetTestObject, String, Int?>(
                 { it::string },
                 { it::nullableProperty },
-                { it!!.length }
+                { it.length }
         )
         val source = SourceTestObject("string", 1)
         val target = TargetTestObject("abc", 0, "def")

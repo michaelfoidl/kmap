@@ -3,8 +3,8 @@ package at.michaelfoidl.kmap.test
 import at.michaelfoidl.kmap.definition.MappingDefinition
 import at.michaelfoidl.kmap.mapper.ConcreteMapper
 import at.michaelfoidl.kmap.mapper.MapperProvider
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.SourceTestObject
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.TargetTestObject
+import at.michaelfoidl.kmap.test.helpers.SourceTestObject
+import at.michaelfoidl.kmap.test.helpers.TargetTestObject
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotBe

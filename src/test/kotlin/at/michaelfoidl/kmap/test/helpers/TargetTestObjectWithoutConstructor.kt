@@ -1,4 +1,4 @@
-package at.michaelfoidl.moody.common.mapping.test.internal.helpers
+package at.michaelfoidl.kmap.test.helpers
 
 class TargetTestObjectWithoutConstructor(
         var string: String,

@@ -6,10 +6,10 @@ import at.michaelfoidl.kmap.exceptions.MappingException
 import at.michaelfoidl.kmap.initializable.Initializable
 import at.michaelfoidl.kmap.mapper.ConcreteMapper
 import at.michaelfoidl.kmap.test.extensions.map
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.SourceTestObject
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.TargetTestObject
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.TargetTestObjectWithPrivateConstructor
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.TargetTestObjectWithoutConstructor
+import at.michaelfoidl.kmap.test.helpers.SourceTestObject
+import at.michaelfoidl.kmap.test.helpers.TargetTestObject
+import at.michaelfoidl.kmap.test.helpers.TargetTestObjectWithPrivateConstructor
+import at.michaelfoidl.kmap.test.helpers.TargetTestObjectWithoutConstructor
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import org.amshove.kluent.*

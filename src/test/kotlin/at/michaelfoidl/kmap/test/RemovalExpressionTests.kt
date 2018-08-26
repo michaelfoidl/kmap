@@ -3,9 +3,9 @@ package at.michaelfoidl.kmap.test
 import at.michaelfoidl.kmap.caching.MappingCache
 import at.michaelfoidl.kmap.definition.RemovalExpression
 import at.michaelfoidl.kmap.exceptions.MappingException
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.Echo
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.SourceTestObject
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.TargetTestObject
+import at.michaelfoidl.kmap.test.helpers.Echo
+import at.michaelfoidl.kmap.test.helpers.SourceTestObject
+import at.michaelfoidl.kmap.test.helpers.TargetTestObject
 import org.amshove.kluent.*
 import org.junit.jupiter.api.Test
 

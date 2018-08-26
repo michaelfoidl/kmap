@@ -1,4 +1,4 @@
-package at.michaelfoidl.moody.common.mapping.test.internal.helpers
+package at.michaelfoidl.kmap.test.helpers
 
 class SourceTestObject private constructor() {
     constructor(string: String, id: Long): this() {

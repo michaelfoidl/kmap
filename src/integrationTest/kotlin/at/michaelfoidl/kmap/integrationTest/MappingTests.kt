@@ -2,10 +2,10 @@ package at.michaelfoidl.kmap.integrationTest
 
 import at.michaelfoidl.kmap.definition.MappingDefinition
 import at.michaelfoidl.kmap.mapper.Mapper
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.SourceTestObject
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.SourceTestObjectWithCircularReference
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.TargetTestObject
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.TargetTestObjectWithCircularReference
+import at.michaelfoidl.kmap.test.helpers.SourceTestObject
+import at.michaelfoidl.kmap.test.helpers.SourceTestObjectWithCircularReference
+import at.michaelfoidl.kmap.test.helpers.TargetTestObject
+import at.michaelfoidl.kmap.test.helpers.TargetTestObjectWithCircularReference
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldEqual

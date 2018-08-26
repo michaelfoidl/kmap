@@ -4,7 +4,7 @@ import at.michaelfoidl.kmap.caching.MappingCache
 import at.michaelfoidl.kmap.definition.MappingDefinition
 import at.michaelfoidl.kmap.mapper.ConcreteMapper
 import at.michaelfoidl.kmap.test.extensions.map
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.*
+import at.michaelfoidl.kmap.test.helpers.*
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotBe

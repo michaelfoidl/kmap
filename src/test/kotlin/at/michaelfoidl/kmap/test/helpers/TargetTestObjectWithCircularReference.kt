@@ -1,4 +1,4 @@
-package at.michaelfoidl.moody.common.mapping.test.internal.helpers
+package at.michaelfoidl.kmap.test.helpers
 
 class TargetTestObjectWithCircularReference private constructor() {
     constructor(id: Long, child: TargetTestObjectWithCircularReference? = null, parent: TargetTestObjectWithCircularReference? = null) : this() {

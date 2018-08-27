@@ -1,3 +1,9 @@
+/*
+ * kmap
+ *
+ * Copyright (c) 2018, Michael Foidl.
+ */
+
 package at.michaelfoidl.kmap
 
 import at.michaelfoidl.kmap.exceptions.MappingException

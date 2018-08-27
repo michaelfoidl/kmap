@@ -1,9 +1,18 @@
+/*
+ * kmap
+ *
+ * Copyright (c) 2018, Michael Foidl.
+ */
+
 package at.michaelfoidl.kmap.caching
 
 import at.michaelfoidl.kmap.initializable.Initializable
 import java.util.*
 import kotlin.reflect.KClass
 
+/**
+ *
+ */
 class MappingCache {
     private val cache: MutableList<MappingCacheEntry<*, *>> = ArrayList()
 

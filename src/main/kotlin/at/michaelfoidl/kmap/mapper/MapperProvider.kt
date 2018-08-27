@@ -1,3 +1,9 @@
+/*
+ * kmap
+ *
+ * Copyright (c) 2018, Michael Foidl.
+ */
+
 package at.michaelfoidl.kmap.mapper
 
 import at.michaelfoidl.kmap.caching.MappingCache

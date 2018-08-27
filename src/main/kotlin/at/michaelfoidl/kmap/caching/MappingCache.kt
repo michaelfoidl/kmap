@@ -26,11 +26,16 @@ import kotlin.reflect.KClass
  * Stores recently mapped objects in order to be reused. This is also necessary to prevent stack overflow errors when mapping circular references.
  *
  * @since 0.1
- * @version 0.1
  */
 class MappingCache {
     private val cache: MutableList<MappingCacheEntry<*, *>> = ArrayList()
 
+    /**
+     * Checks if there is an entry corresponding to the [source] object and the [targetClass] in the cache.
+     *
+     * @return the cached entry or `null`, if none was found.
+     * @see MappingCacheEntry
+     */
     fun <SourceT : Any, TargetT : Any> getEntry(source: SourceT, targetClass: KClass<TargetT>): Initializable<TargetT?>? {
         val cachedElement = this.cache.find {
             it.source == source && it.targetClassName == targetClass.qualifiedName!!
@@ -43,6 +48,12 @@ class MappingCache {
         }
     }
 
+    /**
+     * Checks if there is an entry correponding to the [source] object and the [targetClass] in the cache. If there is not, a new entry is created.
+     *
+     * @return the entry, either newly created or fetched from the cache.
+     * @see MappingCacheEntry
+     */
     fun <SourceT : Any, TargetT : Any> createEntryIfNotExists(source: SourceT, targetClass: KClass<TargetT>): Initializable<TargetT?> {
         val cached = getEntry(source, targetClass)
 

@@ -19,5 +19,10 @@
 
 package at.michaelfoidl.kmap.exceptions
 
-
+/**
+ * An error that can occur during the mapping process. The [message] or the underlying [cause] might provide more detailed
+ * information.
+ *
+ * @since 0.1
+ */
 class MappingException(message: String? = null, cause: Throwable? = null) : Exception(message, cause)

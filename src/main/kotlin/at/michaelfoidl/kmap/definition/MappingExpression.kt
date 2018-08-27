@@ -36,6 +36,7 @@ abstract class MappingExpression<SourceT : Any, TargetT : Any> {
     /**
      * Calls the conversion step of the mapping process using the [source] object and the [cache].
      */
+    @PublishedApi
     internal fun convert(source: SourceT, cache: MappingCache) {
         doConvert(source, cache)
         isConverted = true
@@ -47,6 +48,7 @@ abstract class MappingExpression<SourceT : Any, TargetT : Any> {
      *
      * @throws MappingException if the conversion step has not been executed yet.
      */
+    @PublishedApi
     internal fun execute(target: TargetT) {
         if (!isConverted) {
             throw MappingException("Mapping can only be executed after converting. Call convert() first.")

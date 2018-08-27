@@ -50,45 +50,4 @@ class AdditionExpressionTests {
         // Assert
         target.string shouldEqual "test"
     }
-
-    @Test
-    fun additionExpressionWithFakeProperty_mapping_shouldThrowException() {
-
-        // Arrange
-        val expression = AdditionExpression<SourceTestObject, TargetTestObject, Int>(
-                { String::length },
-                { 42 }
-        )
-        val source = SourceTestObject("string", 1)
-        val target = TargetTestObject("abc", 1, "def")
-        val cache = MappingCache()
-
-        val func = {
-            expression.convert(source, cache)
-            expression.execute(target)
-        }
-
-        // Assert
-        func shouldThrow MappingException::class
-    }
-
-    @Test
-    fun additionExpressionWithImmutableProperty_mapping_shouldThrowException() {
-        // Arrange
-        val expression = AdditionExpression<SourceTestObject, TargetTestObject, Int>(
-                { it::immutableProperty },
-                { 0 }
-        )
-        val source = SourceTestObject("string", 1)
-        val target = TargetTestObject("abc", 1, "def")
-        val cache = MappingCache()
-
-        val func = {
-            expression.convert(source, cache)
-            expression.execute(target)
-        }
-
-        // Assert
-        func shouldThrow MappingException::class
-    }
 }

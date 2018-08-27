@@ -72,25 +72,4 @@ class RemovalExpressionTests {
         // Assert
         Verify on this.echo that this.echo.echo(113) was called
     }
-
-    @Test
-    fun removalExpressionWithFakeProperty_mapping_shouldThrowException() {
-
-        // Arrange
-        val expression = RemovalExpression<SourceTestObject, TargetTestObject, Int>(
-                { String::length },
-                { it!! + 2 }
-        )
-        val source = SourceTestObject("string", 1)
-        val target = TargetTestObject("abc", 1, "def")
-        val cache = MappingCache()
-
-        val func = {
-            expression.convert(source, cache)
-            expression.execute(target)
-        }
-
-        // Assert
-        func shouldThrow MappingException::class
-    }
 }

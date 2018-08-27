@@ -23,10 +23,18 @@ import at.michaelfoidl.kmap.ReflectionUtilities
 import at.michaelfoidl.kmap.caching.MappingCache
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty0
 
-
+/**
+ * A subtype of [MappingExpression] that supports removing or ignoring a property of the source object that has no equivalent
+ * at the target object.
+ *
+ * @since 0.1
+ * @constructor Creates a new [RemovalExpression] defined by a [sourcePropertyFunction] returning the source property and
+ * an [actionFunction] executing any task that might be done since there is a loss of information.
+ */
 class RemovalExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?>(
-        private val sourcePropertyFunction: (SourceT) -> KProperty<SourcePropertyT?>,
+        private val sourcePropertyFunction: (SourceT) -> KProperty0<SourcePropertyT?>,
         private val actionFunction: (SourcePropertyT?) -> Unit
 ) : MappingExpression<SourceT, TargetT>() {
 

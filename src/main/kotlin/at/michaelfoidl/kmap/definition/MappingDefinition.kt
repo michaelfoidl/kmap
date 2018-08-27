@@ -30,7 +30,12 @@ import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 import kotlin.reflect.full.memberProperties
 
-
+/**
+ * Defines how an object should be mapped. A [MappingDefinition] is created using a builder pattern adding one [MappingExpression]
+ * after the other to a collection defining the mapping process.
+ *
+ * @since 0.1
+ */
 class MappingDefinition<SourceT : Any, TargetT : Any>(
         private var sourceClass: KClass<SourceT>,
         private var targetClass: KClass<TargetT>
@@ -39,6 +44,11 @@ class MappingDefinition<SourceT : Any, TargetT : Any>(
     @PublishedApi
     internal val mappingExpressions: ArrayList<MappingExpression<SourceT, TargetT>> = ArrayList()
 
+    /**
+     * Adds a new [ConversionExpression] to the expression list. It is defined by functions describing [source] and [target]
+     * properties. Optinally, a [converter] function can convert between different types and a [default] value is returned
+     * if the source value equals `null`.
+     */
     fun <SourcePropertyT : Any, TargetPropertyT : Any> convert(
             source: (SourceT) -> KProperty0<SourcePropertyT?>,
             target: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
@@ -49,6 +59,11 @@ class MappingDefinition<SourceT : Any, TargetT : Any>(
         return this
     }
 
+    /**
+     * Adds a new [ConversionExpression] to the expression list. It is defined by functions describing [source] and [target]
+     * properties. A [mapper] converts the source type to the target type. If the source value equals `null`, the target
+     * value will be `null` as well.
+     */
     inline fun <reified SourcePropertyT : Any, reified TargetPropertyT : Any> map(
             noinline source: (SourceT) -> KProperty0<SourcePropertyT?>,
             noinline target: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
@@ -70,6 +85,10 @@ class MappingDefinition<SourceT : Any, TargetT : Any>(
         return this
     }
 
+    /**
+     * Adds a new [AdditionExpression] to the expression list. It is defined by functions describing the [target] property
+     * and the [targetValue] to which the [target] property should be set.
+     */
     fun <TargetPropertyT : Any> add(
             target: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
             targetValue: (SourceT) -> TargetPropertyT?
@@ -78,6 +97,10 @@ class MappingDefinition<SourceT : Any, TargetT : Any>(
         return this
     }
 
+    /**
+     * Adds a new [RemovalExpression] to the expression list. It is defined by functions describing the [source] property
+     * and the [action] that should take place instead.
+     */
     fun <SourcePropertyT : Any> remove(
             source: (SourceT) -> KProperty0<SourcePropertyT?>,
             action: (SourcePropertyT?) -> Unit
@@ -86,6 +109,10 @@ class MappingDefinition<SourceT : Any, TargetT : Any>(
         return this
     }
 
+    /**
+     * Adds a new [RemovalExpression] to the expression list. It is defined by a function describing the [source] property.
+     * This is a special case of [remove] where no action takes place.
+     */
     fun <SourcePropertyT : Any> ignore(
             source: (SourceT) -> KProperty0<SourcePropertyT?>
     ): MappingDefinition<SourceT, TargetT> {
@@ -95,13 +122,20 @@ class MappingDefinition<SourceT : Any, TargetT : Any>(
 
 
     // TODO autoMap (just maps the property to the target property with the same name
-
-    fun doesApply(sourceClass: KClass<*>, targetClass: KClass<*>): Boolean {
+    /**
+     * Checks if this [MappingDefinition] can be used for mapping between the [sourceClass] and the [targetClass].
+     */
+    internal fun doesApply(sourceClass: KClass<*>, targetClass: KClass<*>): Boolean {
         return sourceClass == this.sourceClass && targetClass == this.targetClass
     }
 
     // TODO move validation to extra class
 
+    /**
+     * Checks, if the configured [MappingDefinition] is valid for mapping between the [sourceClass] and the [targetClass].
+     *
+     * @return the result of the validation process.
+     */
     fun validate(sourceClass: KClass<SourceT>, targetClass: KClass<TargetT>): ValidationResult {
 
         val result = ValidationResult()

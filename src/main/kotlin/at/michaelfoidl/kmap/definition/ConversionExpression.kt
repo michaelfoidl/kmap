@@ -25,7 +25,15 @@ import at.michaelfoidl.kmap.initializable.Initializable
 import at.michaelfoidl.kmap.caching.MappingCache
 import kotlin.reflect.*
 
-
+/**
+ * A subtype of [MappingExpression] that supports converting a property of the source object to a property of the target object.
+ * For converting between different types, you can use a simple lambda expression or a mapper to do so.
+ *
+ * @since 0.1
+ * @constructor Creates a new [ConversionExpression] defined by a [sourcePropertyFunction] returning the source property,
+ * a [targetPropertyFunction] returning the target property, a [conversionFunction] providing the conversion logic and a
+ * [executionFunction] writing the results of the conversion process to the target object.
+ */
 class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?, TargetPropertyT : Any?>(
         private val sourcePropertyFunction: (SourceT) -> KProperty0<SourcePropertyT?>,
         private val targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
@@ -33,6 +41,11 @@ class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?,
         private val executionFunction: (Initializable<TargetPropertyT?>) -> Unit
 ) : MappingExpression<SourceT, TargetT>() {
 
+    /**
+     * @constructor Creates a new [ConversionExpression] defined by a [sourcePropertyFunction] returning the source property
+     * and a [targetPropertyFunction] returning the target property. If the types of source property and target property
+     * are not the same, the values are simply casted.
+     */
     constructor(
             sourcePropertyFunction: (SourceT) -> KProperty0<SourcePropertyT?>,
             targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>
@@ -42,6 +55,13 @@ class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?,
             null
     )
 
+    /**
+     * @constructor Creates a new [ConversionExpression] defined by a [sourcePropertyFunction] returning the source property,
+     * a [targetPropertyFunction] returning the target property, a [mappingFunction] converting the type of the source
+     * property to the type of the target property and a [defaultValueFunction] providing a value in case the source value
+     * is `null`. If no [mappingFunction] is provided and the types of source property and target property are not the same,
+     * the values are simply casted.
+     */
     constructor(
             sourcePropertyFunction: (SourceT) -> KProperty0<SourcePropertyT?>,
             targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,

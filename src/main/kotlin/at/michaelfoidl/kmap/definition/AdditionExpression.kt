@@ -19,16 +19,21 @@
 
 package at.michaelfoidl.kmap.definition
 
-import at.michaelfoidl.kmap.exceptions.MappingException
 import at.michaelfoidl.kmap.ReflectionUtilities
 import at.michaelfoidl.kmap.caching.MappingCache
 import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
-
+/**
+ * A subtype of [MappingExpression] that supports adding a new property to the target object that has no equivalent at the source object.
+ *
+ * @since 0.1
+ * @constructor Creates a new [AdditionExpression] defined by a [targetPropertyFunction] returning the target property and
+ * a [targetValueFunction] providing the value to which the target property should be set.
+ */
 class AdditionExpression<SourceT : Any, TargetT : Any, TargetPropertyT : Any?>(
-        private val targetPropertyFunction: (TargetT) -> KProperty<TargetPropertyT?>,
+        private val targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
         private val targetValueFunction: (SourceT) -> TargetPropertyT?
 ) : MappingExpression<SourceT, TargetT>() {
 
@@ -43,11 +48,7 @@ class AdditionExpression<SourceT : Any, TargetT : Any, TargetPropertyT : Any?>(
 
         ReflectionUtilities.ensureThatPropertyExists(target::class, targetProperty)
 
-        if (targetProperty is KMutableProperty<*>) {
-            targetProperty.setter.call(this.result)
-        } else {
-            throw MappingException("Property '" + targetProperty.name + "' of " + target::class.qualifiedName + " is immutable and therefore could not be set.")
-        }
+        targetProperty.setter.call(this.result)
     }
 
     override fun mapsToProperty(elementClass: KClass<TargetT>, property: KProperty<*>): Boolean {

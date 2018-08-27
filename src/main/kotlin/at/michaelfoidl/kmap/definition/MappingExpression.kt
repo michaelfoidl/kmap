@@ -24,28 +24,57 @@ import at.michaelfoidl.kmap.caching.MappingCache
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-
+/**
+ * Base class for defining different ways to map between source and target objects.
+ *
+ * @since 0.1
+ */
 abstract class MappingExpression<SourceT : Any, TargetT : Any> {
 
     private var isConverted: Boolean = false
 
-    fun convert(source: SourceT, cache: MappingCache) {
+    /**
+     * Calls the conversion step of the mapping process using the [source] object and the [cache].
+     */
+    internal fun convert(source: SourceT, cache: MappingCache) {
         doConvert(source, cache)
         isConverted = true
     }
 
-    fun execute(target: TargetT) {
+    /**
+     * Calls the execution step of the mapping process using the [target] object. The execution step can only be executed
+     * after the conversion step.
+     *
+     * @throws MappingException if the conversion step has not been executed yet.
+     */
+    internal fun execute(target: TargetT) {
         if (!isConverted) {
             throw MappingException("Mapping can only be executed after converting. Call convert() first.")
         }
         doExecute(target)
     }
 
+    /**
+     * Represents the conversion step of the mapping process where the value of the source property of the [source] object
+     * is fetched and converted to the target type using the [cache].
+     */
     protected abstract fun doConvert(source: SourceT, cache: MappingCache)
 
+    /**
+     * Represents the execution step of the mapping process where the result of the conversion step is written to the
+     * [target] object.
+     */
     protected abstract fun doExecute(target: TargetT)
 
+    /**
+     * Checks, if the [property] of the given [elementClass] is the target property of this [MappingExpression]. Note
+     * that some expressions might not have a target property at all.
+     */
     internal abstract fun mapsToProperty(elementClass: KClass<TargetT>, property: KProperty<*>): Boolean
 
+    /**
+     * Checks, if the [property] of the given [elementClass] is the source property of this [MappingExpression]. Note
+     * that some expressions might not have a source property at all.
+     */
     internal abstract fun mapsFromProperty(elementClass: KClass<SourceT>, property: KProperty<*>): Boolean
 }

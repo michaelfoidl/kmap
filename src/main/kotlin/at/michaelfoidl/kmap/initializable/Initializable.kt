@@ -19,18 +19,36 @@
 
 package at.michaelfoidl.kmap.initializable
 
-
+/**
+ * Any object that is unknown when creating this instance. This enables storing references to this object although its
+ * value will only be known at a later point in time.
+ *
+ * @since 0.1
+ * @constructor Creates a new, uninitialized instance.
+ */
 class Initializable<T : Any?>() {
 
+    /**
+     * @constructor Creates a new, already initialized instance. If you do not have a specific reason for storing the [value]
+     * inside an [Initializable], consider declaring it directly.
+     */
     constructor(value: T?) : this() {
         initialize(value)
     }
 
+    /**
+     * Indicates if the instance has already been initialized or not.
+     */
     var isInitialized: Boolean = false
         private set
 
     private var initializedValue: T? = null
 
+    /**
+     * The value stored inside this instance.
+     *
+     * @throws UnsupportedOperationException if this instance has not been initialized yet.
+     */
     var value: T? = null
         get() {
             if (this.isInitialized) {
@@ -40,6 +58,9 @@ class Initializable<T : Any?>() {
             }
         }
 
+    /**
+     * Initializes this instance with a new [value]. If it already is initialized, the old value is overridden.
+     */
     fun initialize(value: T?) {
         this.isInitialized = true
         this.initializedValue = value

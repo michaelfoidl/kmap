@@ -28,29 +28,61 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 
-object ReflectionUtilities {
+/**
+ * Provides helper methods for working with Kotlin reflection.
+ *
+ * @since 0.1
+ */
+@PublishedApi
+internal object ReflectionUtilities {
+
+    /**
+     * Checks if the [property] exists for the given [elementClass].
+     *
+     * @return a value indicating if the [property] exists.
+     */
     fun validateThatPropertyExists(elementClass: KClass<*>, property: KProperty<*>): Boolean {
         return elementClass.memberProperties.any {
             it.name == property.name
         }
     }
 
+    /**
+     * Ensures that the [property] exists for the given [elementClass].
+     *
+     * @throws MappingException if the [property] does not exist.
+     */
     fun ensureThatPropertyExists(elementClass: KClass<*>, property: KProperty<*>) {
         if (!validateThatPropertyExists(elementClass, property)) {
             throw MappingException("No Property '" + property.name + "' was found for class " + elementClass.qualifiedName + ".")
         }
     }
 
+    /**
+     * Checks if a primary constructor exists for the given [elementClass].
+     *
+     * @return a value indicating if a primary constructor exists.
+     */
     fun <ElementT : Any> validateThatPrimaryConstructorExists(elementClass: KClass<ElementT>): Boolean {
         return elementClass.primaryConstructor != null
     }
 
+    /**
+     * Ensures that a primary constructor exists for the given [elementClass].
+     *
+     * @throws MappingException if no primary constructor exists.
+     */
     fun <ElementT : Any> ensureThatPrimaryConstructorExists(elementClass: KClass<ElementT>) {
         if (!validateThatPrimaryConstructorExists(elementClass)) {
             throw MappingException("No primary constructor was found for class " + elementClass.qualifiedName + ".")
         }
     }
 
+    /**
+     * Checks if an empty primary constructor or a primary constructor with optional parameters only exists for the given [elementClass].
+     *
+     * @returns a value indicating if such a primary constructor exists.
+     */
     fun <ElementT : Any> validateThatEmptyPrimaryConstructorExists(elementClass: KClass<ElementT>): Boolean {
         return if (validateThatPrimaryConstructorExists(elementClass)) {
             getConstructor(elementClass).parameters.all { it.isOptional }
@@ -59,6 +91,12 @@ object ReflectionUtilities {
         }
     }
 
+    /**
+     * Ensures that an empty primary constructor or a primary constructor with optional parameters only exists for the given
+     * [elementClass].
+     *
+     * @throws MappingException if no such primary constructor exists.
+     */
     fun <ElementT : Any> ensureThatEmptyPrimaryConstructorExists(elementClass: KClass<ElementT>) {
         ensureThatPrimaryConstructorExists(elementClass)
         if (!getConstructor(elementClass).parameters.all { it.isOptional }) {
@@ -66,11 +104,22 @@ object ReflectionUtilities {
         }
     }
 
+    /**
+     * Creates a new instance of the given [elementClass] by invoking its primary constructor. This only works if the
+     * constructor has no parameters or if all of them are optional.
+     *
+     * @return an instance of the [elementClass].
+     */
     fun <ElementT : Any> createNewInstance(elementClass: KClass<ElementT>): ElementT {
         ensureThatEmptyPrimaryConstructorExists(elementClass)
         return getConstructor(elementClass).callBy(HashMap())
     }
 
+    /**
+     * Gets the primary constructor for the given [elementClass] and makes sure that it is accessible.
+     *
+     * @return the primary constructor of the [elementClass].
+     */
     private fun <ElementT : Any> getConstructor(elementClass: KClass<ElementT>): KFunction<ElementT> {
         ensureThatPrimaryConstructorExists(elementClass)
         val constructor = elementClass.primaryConstructor!!

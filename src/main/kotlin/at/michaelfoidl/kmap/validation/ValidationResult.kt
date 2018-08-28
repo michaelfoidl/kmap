@@ -20,29 +20,56 @@
 package at.michaelfoidl.kmap.validation
 
 
+/**
+ * The result of the validation of a mapping definition.
+ *
+ * @since 0.1
+ */
 class ValidationResult {
+    /**
+     * The list of errors that occurred during the validation.
+     */
     var errors: ArrayList<String> = ArrayList()
         private set
+
+    /**
+     * The list of warnings that occurred during the validation.
+     */
     var warnings: ArrayList<String> = ArrayList()
         private set
 
+    /**
+     * Indicates if any errors occurred during the validation.
+     */
     fun isFailure(): Boolean {
         return !this.errors.isEmpty()
     }
 
+    /**
+     * Indicates if only warnings occurred during the validation.
+     */
     fun isWarning(): Boolean {
         return this.errors.isEmpty() && !this.warnings.isEmpty()
     }
 
+    /**
+     * Indicates if no warnings and no errors occurred during the validation.
+     */
     fun isSuccess(): Boolean {
         return this.errors.isEmpty() && this.warnings.isEmpty()
     }
 
-    fun addError(errorMessage: String) {
+    /**
+     * Adds a new [errorMessage] to the list of errors.
+     */
+    internal fun addError(errorMessage: String) {
         this.errors.add("ERROR: $errorMessage")
     }
 
-    fun addWarning(warningMessage: String) {
+    /**
+     * Adds a new [warningMessage] to the list of warnings.
+     */
+    internal fun addWarning(warningMessage: String) {
         this.warnings.add("WARNING: $warningMessage")
     }
 }

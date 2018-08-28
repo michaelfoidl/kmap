@@ -1,53 +1,33 @@
+/*
+ * kmap
+ * version 0.1.1
+ *
+ * Copyright (c) 2018, Michael Foidl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package at.michaelfoidl.kmap.test
 
-import at.michaelfoidl.kmap.caching.MappingCache
 import at.michaelfoidl.kmap.definition.MappingDefinition
 import at.michaelfoidl.kmap.mapper.ConcreteMapper
-import at.michaelfoidl.kmap.test.extensions.map
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.*
+import at.michaelfoidl.kmap.test.helpers.*
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldEqual
-import org.amshove.kluent.shouldNotBe
 import org.junit.jupiter.api.Test
 
 
 class MappingDefinitionTests {
-
-    @Test
-    fun validMappingDefinition_mappingWithConversionExpression_shouldBeSuccessful() {
-
-        // Arrange
-        val definition = MappingDefinition(SourceTestObject::class, TargetTestObject::class)
-                .convert({ it::id }, { it::id })
-                .convert({ it::string }, { it::string })
-        val mapper = ConcreteMapper(definition, MappingCache())
-        val sourceObject = SourceTestObject("Test", 123)
-
-        // Act
-        val result = mapper.map(sourceObject)
-
-        // Assert
-        result shouldNotBe null
-        result.string shouldEqual "Test"
-        result.id shouldEqual 123
-    }
-
-    @Test
-    fun validMappingDefinition_mappingWithAdditionExpression_shouldBeSuccessful() {
-
-        // Arrange
-        val definition = MappingDefinition(SourceTestObject::class, TargetTestObject::class)
-                .add({ it::additionalProperty }, { "Hi" })
-        val mapper = ConcreteMapper(definition, MappingCache())
-        val sourceObject = SourceTestObject("Test", 123)
-
-        // Act
-        val result = mapper.map(sourceObject)
-
-        // Assert
-        result shouldNotBe null
-        result.additionalProperty shouldEqual "Hi"
-    }
 
     @Test
     fun validMappingDefinition_shouldApplyForCorrectTypes() {
@@ -116,7 +96,7 @@ class MappingDefinitionTests {
         val definition = MappingDefinition(SourceTestObject::class, TargetTestObject::class)
                 .convert({ it::id }, { it::id })
                 .add({ it::string }, { "abc" })
-                .add({ it::additionalProperty }, { it.string.length })
+                .add({ it::additionalProperty }, { it.string.length.toString() })
                 .add({ it::nullableProperty }, { null })
                 .ignore { it::immutableProperty }
 
@@ -133,7 +113,7 @@ class MappingDefinitionTests {
         // Arrange
         val definition = MappingDefinition(SourceTestObject::class, TargetTestObject::class)
                 .convert({ it::id }, { it::id })
-                .convert({ it::string }, { it::additionalProperty }, { it!!.length })
+                .convert({ it::string }, { it::additionalProperty }, { it.length.toString() })
                 .add({ it::nullableProperty }, { null })
                 .ignore { it::immutableProperty }
 
@@ -151,7 +131,7 @@ class MappingDefinitionTests {
         val definition = MappingDefinition(SourceTestObject::class, TargetTestObject::class)
                 .convert({ it::id }, { it::id })
                 .convert({ it::string }, { it::string })
-                .add({ it::additionalProperty }, { it.string.length })
+                .add({ it::additionalProperty }, { it.string.length.toString() })
                 .ignore { it::immutableProperty }
 
         // Act
@@ -185,7 +165,7 @@ class MappingDefinitionTests {
         val definition = MappingDefinition(SourceTestObjectWithoutConstructor::class, TargetTestObject::class)
                 .convert({ it::id }, { it::id })
                 .convert({ it::string }, { it::string })
-                .add({ it::additionalProperty }, { it.string.length })
+                .add({ it::additionalProperty }, { it.string.length.toString() })
                 .add({ it::nullableProperty }, { null })
 
         // Act

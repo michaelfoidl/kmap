@@ -1,3 +1,22 @@
+/*
+ * kmap
+ * version 0.1.1
+ *
+ * Copyright (c) 2018, Michael Foidl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package at.michaelfoidl.kmap.mapper
 
 import at.michaelfoidl.kmap.ReflectionUtilities
@@ -8,21 +27,33 @@ import at.michaelfoidl.kmap.definition.MappingExpression
 import java.util.*
 
 
-class ConcreteMapper<SourceT : Any, TargetT : Any>(
+/**
+ * A mapper implementation that can be used for mapping between one specific source object and one specific target object.
+ * The direction cannot be reversed.
+ *
+ * @since 0.1
+ * @constructor Creates a new instance using the provided [MappingDefinition] and the given [cache].
+ */
+@PublishedApi
+internal class ConcreteMapper<SourceT : Any, TargetT : Any>(
         mappingDefinition: MappingDefinition<SourceT, TargetT>,
         @PublishedApi
-        internal val mappingCache: MappingCache
+        internal val cache: MappingCache
 ) {
     @PublishedApi
     internal var mappingExpressions: ArrayList<MappingExpression<SourceT, TargetT>> = mappingDefinition.mappingExpressions
 
-    @PublishedApi
-    internal inline fun <reified MappingTargetT : TargetT> fetch(source: SourceT): Initializable<MappingTargetT?> {
-        val cached = this.mappingCache.getEntry(source, MappingTargetT::class)
+    /**
+     * Executes the conversion step of the mapping process for every [MappingExpression] using the given [source].
+     *
+     * @return the result of the conversion step which might not be initialized yet.
+     */
+    inline fun <reified MappingTargetT : TargetT> convert(source: SourceT): Initializable<MappingTargetT?> {
+        val cached = this.cache.getEntry(source, MappingTargetT::class)
         return if (cached == null) {
-            val result = this.mappingCache.createEntryIfNotExists(source, MappingTargetT::class)
+            val result = this.cache.createEntryIfNotExists(source, MappingTargetT::class)
             this.mappingExpressions.forEach {
-                it.fetch(source, this.mappingCache)
+                it.convert(source, this.cache)
             }
             result
         } else {
@@ -30,15 +61,16 @@ class ConcreteMapper<SourceT : Any, TargetT : Any>(
         }
     }
 
-    @PublishedApi
-    internal inline fun <reified MappingTargetT : TargetT> execute(fetched: Initializable<in MappingTargetT?>) {
-        if (!fetched.isInitialized) {
+    /**
+     * Executes the execution step of the mapping process for every [MappingExpression] using the [converted] value from
+     * the conversion step.
+     */
+    inline fun <reified MappingTargetT : TargetT> execute(converted: Initializable<in MappingTargetT?>) {
+        if (!converted.isInitialized) {
             val target = ReflectionUtilities.createNewInstance(MappingTargetT::class)
-            fetched.initialize(target)
-
+            converted.initialize(target)
             this.mappingExpressions.forEach {
-                @Suppress("UNCHECKED_CAST")
-                (it as MappingExpression<SourceT, MappingTargetT>).execute(target)
+                it.execute(target)
             }
         }
     }

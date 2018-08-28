@@ -44,6 +44,7 @@ build/
 .idea/**/kotlinc.xml
 .idea/**/vcs.xml
 .idea/**/compiler.xml
+.idea/**/profiles_settings.xml
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

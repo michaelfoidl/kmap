@@ -1,11 +1,27 @@
+/*
+ * kmap
+ * version 0.1.1
+ *
+ * Copyright (c) 2018, Michael Foidl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package at.michaelfoidl.kmap.integrationTest
 
 import at.michaelfoidl.kmap.definition.MappingDefinition
 import at.michaelfoidl.kmap.mapper.Mapper
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.SourceTestObject
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.SourceTestObjectWithCircularReference
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.TargetTestObject
-import at.michaelfoidl.moody.common.mapping.test.internal.helpers.TargetTestObjectWithCircularReference
+import at.michaelfoidl.kmap.test.helpers.*
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldEqual
@@ -49,6 +65,152 @@ class MappingTests {
     }
 
     @Test
+    fun validMappingDefinition_mappingWithConvertedPropertyAndAutoCast_shouldBeSuccessful() {
+
+        // Arrange
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+                                .convert({ it::id }, { it::id })
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<TargetTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        result.id shouldEqual 123
+    }
+
+    @Test
+    fun validMappingDefinition_mappingWithConvertedPropertyAndConversionFunction_shouldBeSuccessful() {
+
+        // Arrange
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+                                .convert({ it::string },
+                                        { it::id },
+                                        {
+                                            it.length
+                                        })
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<TargetTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        result.id shouldEqual 4
+    }
+
+    @Test
+    fun validMappingDefinition_mappingWithConvertedPropertyAndMapper_shouldBeSuccessful() {
+
+        // Arrange
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObjectWithComplexProperty::class, TargetTestObjectWithComplexProperty::class)
+                                .map({ it::child }, { it::child }, this)
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObjectWithComplexProperty(123, SourceTestObjectWithComplexProperty(124))
+
+        // Act
+        val result = mapper.map<TargetTestObjectWithComplexProperty>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        result.child shouldNotBe null
+        result.child shouldBeInstanceOf TargetTestObjectWithComplexProperty::class
+        result.child!!.child shouldBe null
+    }
+
+    @Test
+    fun validMappingDefinition_mappingWithAddedProperty_shouldBeSuccessful() {
+
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+                                .add({ it::additionalProperty }, { "Hi!" })
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<TargetTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        result.additionalProperty shouldEqual "Hi"
+    }
+
+    @Test
+    fun validMappingDefintion_mappingWithRemovedProperty_shouldBeSuccessful() {
+
+        // Arrange
+        var dummy: String? = ""
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+                                .remove({ it::string },
+                                        {
+                                            dummy = it!!
+                                        })
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<TargetTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        dummy shouldEqual "Test"
+    }
+
+    @Test
+    fun validMappingDefintion_mappingWithIgnoredProperty_shouldBeSuccessful() {
+
+        // Arrange
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+                                .ignore { it::string }
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<TargetTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+    }
+
+    @Test
     fun validMapper_mappingCircularReferenceWithOneMapper_shouldBeSuccessful() {
 
         // Arrange
@@ -57,10 +219,10 @@ class MappingTests {
                 return listOf(
                         MappingDefinition(SourceTestObjectWithCircularReference::class, TargetTestObjectWithCircularReference::class)
                                 .convert({ it::id }, { it::id })
-                                .convertWithMapper({ it::child },
+                                .map({ it::child },
                                         { it::child },
                                         this)
-                                .convertWithMapper({ it::parent },
+                                .map({ it::parent },
                                         { it::parent },
                                         this)
                 )
@@ -94,10 +256,10 @@ class MappingTests {
                 return listOf(
                         MappingDefinition(SourceTestObjectWithCircularReference::class, TargetTestObjectWithCircularReference::class)
                                 .convert({ it::id }, { it::id })
-                                .convertWithMapper({ it::child },
+                                .map({ it::child },
                                         { it::child },
                                         mapper2)
-                                .convertWithMapper({ it::parent },
+                                .map({ it::parent },
                                         { it::parent },
                                         mapper2)
                 )
@@ -109,10 +271,10 @@ class MappingTests {
                 return listOf(
                         MappingDefinition(SourceTestObjectWithCircularReference::class, TargetTestObjectWithCircularReference::class)
                                 .convert({ it::id }, { it::id })
-                                .convertWithMapper({ it::child },
+                                .map({ it::child },
                                         { it::child },
                                         mapper1)
-                                .convertWithMapper(
+                                .map(
                                         { it::parent },
                                         { it::parent },
                                         mapper1)

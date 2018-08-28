@@ -1,21 +1,46 @@
+/*
+ * kmap
+ * version 0.1.1
+ *
+ * Copyright (c) 2018, Michael Foidl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package at.michaelfoidl.kmap.definition
 
-import at.michaelfoidl.kmap.exceptions.MappingException
 import at.michaelfoidl.kmap.ReflectionUtilities
 import at.michaelfoidl.kmap.caching.MappingCache
 import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
 
+/**
+ * A subtype of [MappingExpression] that supports adding a new property to the target object that has no equivalent at the source object.
+ *
+ * @since 0.1
+ * @constructor Creates a new [AdditionExpression] defined by a [targetPropertyFunction] returning the target property and
+ * a [targetValueFunction] providing the value to which the target property should be set.
+ */
 class AdditionExpression<SourceT : Any, TargetT : Any, TargetPropertyT : Any?>(
-        private val targetPropertyFunction: (TargetT) -> KProperty<TargetPropertyT?>,
+        private val targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
         private val targetValueFunction: (SourceT) -> TargetPropertyT?
 ) : MappingExpression<SourceT, TargetT>() {
 
     private var result: TargetPropertyT? = null
 
-    override fun doFetch(source: SourceT, cache: MappingCache) {
+    override fun doConvert(source: SourceT, cache: MappingCache) {
         this.result = targetValueFunction.invoke(source)
     }
 
@@ -24,11 +49,7 @@ class AdditionExpression<SourceT : Any, TargetT : Any, TargetPropertyT : Any?>(
 
         ReflectionUtilities.ensureThatPropertyExists(target::class, targetProperty)
 
-        if (targetProperty is KMutableProperty<*>) {
-            targetProperty.setter.call(this.result)
-        } else {
-            throw MappingException("Property '" + targetProperty.name + "' of " + target::class.qualifiedName + " is immutable and therefore could not be set.")
-        }
+        targetProperty.setter.call(this.result)
     }
 
     override fun mapsToProperty(elementClass: KClass<TargetT>, property: KProperty<*>): Boolean {

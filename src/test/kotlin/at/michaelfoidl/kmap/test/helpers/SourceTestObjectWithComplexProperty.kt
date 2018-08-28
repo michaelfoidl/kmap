@@ -19,7 +19,12 @@
 
 package at.michaelfoidl.kmap.test.helpers
 
-class TargetTestObjectWithoutConstructor(
-        var string: String,
-        var id: Long
-)
+class SourceTestObjectWithComplexProperty private constructor() {
+    constructor(id: Long, child: SourceTestObjectWithComplexProperty? = null): this() {
+        this.id = id
+        this.child = child
+    }
+
+    var id: Long = -1
+    var child: SourceTestObjectWithComplexProperty? = null
+}

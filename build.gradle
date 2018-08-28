@@ -5,6 +5,8 @@ apply plugin: 'maven-publish'
 
 buildscript {
     ext {
+        VERSION = '0.1.1'
+
         kotlin_version = '1.2.61'
 
         kluent_version = '1.40'
@@ -26,6 +28,24 @@ buildscript {
 repositories {
     jcenter()
 }
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+    testImplementation "org.amshove.kluent:kluent:$kluent_version"
+}
+
+
+// Source Set
 
 sourceSets {
     main {
@@ -49,18 +69,21 @@ idea {
     }
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
 task integrationTest(type: Test) {
     description = "Run integration tests (located in src/integrationTest/...)."
     group = 'verification'
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
+
+dependencies {
+    integrationTestCompile sourceSets.test.output
+}
+
+
+// Publishing
+
+version = VERSION
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
@@ -89,7 +112,6 @@ def pomConfig = {
         developer {
             id "michaelfoidl"
             name "Michael Foidl"
-            email "foidl.michael@gmail.com"
         }
     }
 
@@ -110,7 +132,7 @@ publishing {
             }
             groupId 'at.michaelfoidl'
             artifactId 'kmap'
-            version '0.1'
+            version VERSION
             pom.withXml {
                 def root = asNode()
                 root.appendNode('description', 'A simple object-to-object mapping library written in Kotlin.')
@@ -120,17 +142,6 @@ publishing {
             }
         }
     }
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
-    testImplementation "org.amshove.kluent:kluent:$kluent_version"
-
-    integrationTestCompile sourceSets.test.output
 }
 
 bintray {
@@ -144,8 +155,8 @@ bintray {
         licenses = ['Apache-2.0']
         vcsUrl = 'https://gitlab.com/michaelfoidl/kmap.git'
         version {
-            name = '0.1'
-            desc = '0.1'
+            name = VERSION
+            desc = "kmap library version $VERSION"
             released = new Date()
         }
     }

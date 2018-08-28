@@ -115,7 +115,8 @@ At the moment, <b>kmap</b> is at an early alpha stage and under heavy developmen
 ## Version History
 
 - 0.1 Initial version
-  - 0.1.1 Documentation and Refactoring
-    - added KDoc and README
-    - refactored `ConversionExpression` for better error detection support at compile time
-    - smaller fixes (package names, typos, ...)
+
+- 0.1.1 Documentation and Refactoring
+  - added KDoc and README
+  - refactored `ConversionExpression` for better error detection support at compile time
+  - smaller fixes (package names, typos, ...)

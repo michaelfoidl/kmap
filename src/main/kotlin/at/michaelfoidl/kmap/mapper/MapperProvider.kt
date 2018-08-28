@@ -23,19 +23,34 @@ import at.michaelfoidl.kmap.caching.MappingCache
 import at.michaelfoidl.kmap.definition.MappingDefinition
 import kotlin.reflect.KClass
 
-class MapperProvider(
+
+/**
+ * Provides and stores [ConcreteMapper]s to be reused.
+ *
+ * @since 0.1
+ */
+@PublishedApi
+internal class MapperProvider(
         private val mappingDefinitionFunction: (sourceClass: KClass<*>, targetClass: KClass<*>) -> MappingDefinition<*, *>
 ) {
     private val mappingCache: MappingCache = MappingCache()
     private val cache: HashMap<Int, ConcreteMapper<*, *>?> = HashMap()
 
-    @PublishedApi
-    internal inline fun <reified SourceT : Any, reified TargetT : Any> provideMapper(context: Any): ConcreteMapper<SourceT, TargetT> {
+    /**
+     * Provides a mapper for mapping between [SourceT] and [TargetT] with the given [context]. If the mapper does already
+     * exist in the store, it is reused. A single [MappingCache] is shared between all mappers.
+     *
+     * @return a mapper that can map between the given types.
+     */
+    inline fun <reified SourceT : Any, reified TargetT : Any> provideMapper(context: Any): ConcreteMapper<SourceT, TargetT> {
         return provideMapper(SourceT::class, TargetT::class, context)
     }
 
-    @PublishedApi
-    internal fun <SourceT : Any, TargetT : Any> provideMapper(sourceClass: KClass<out SourceT>, targetClass: KClass<out TargetT>, context: Any): ConcreteMapper<SourceT, TargetT> {
+    /**
+     * Provides a mapper for mapping between [sourceClass] and [targetClass] with the given [context]. If the mapper does
+     * already exist in the store, it is reused. A single [MappingCache] is shared between all mappers.
+     */
+    fun <SourceT : Any, TargetT : Any> provideMapper(sourceClass: KClass<out SourceT>, targetClass: KClass<out TargetT>, context: Any): ConcreteMapper<SourceT, TargetT> {
         val result: ConcreteMapper<*, *> =
                 if (this.cache.containsKey(context.hashCode())) {
                     this.cache[context.hashCode()]!!

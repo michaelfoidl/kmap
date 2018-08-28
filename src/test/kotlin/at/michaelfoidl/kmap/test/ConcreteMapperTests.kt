@@ -107,7 +107,7 @@ class ConcreteMapperTests {
 
         // Act
         val result = mapper.map(sourceObject)
-        val cached = mapper.mappingCache.getEntry(sourceObject, TargetTestObject::class)
+        val cached = mapper.cache.getEntry(sourceObject, TargetTestObject::class)
 
         // Assert
         cached shouldNotBe null

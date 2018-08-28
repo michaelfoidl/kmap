@@ -25,6 +25,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
+
 /**
  * A subtype of [MappingExpression] that supports adding a new property to the target object that has no equivalent at the source object.
  *

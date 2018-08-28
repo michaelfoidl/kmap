@@ -24,6 +24,7 @@ import at.michaelfoidl.kmap.caching.MappingCache
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
+
 /**
  * Base class for defining different ways to map between source and target objects.
  *

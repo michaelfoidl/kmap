@@ -17,18 +17,14 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.caching
+package at.michaelfoidl.kmap.test.helpers
 
-import at.michaelfoidl.kmap.initializable.Initializable
+class TargetTestObjectWithComplexProperty private constructor() {
+    constructor(id: Long, child: TargetTestObjectWithComplexProperty? = null) : this() {
+        this.id = id
+        this.child = child
+    }
 
-
-/**
- * Represents a single entry in the cache consisting of the [source] object, the [targetClassName] and the [target] which is the result of the mapping process.
- *
- * @since 0.1
- */
-internal class MappingCacheEntry<SourceT : Any?, TargetT : Any?>(
-        var source: SourceT,
-        var targetClassName: String,
-        var target: Initializable<TargetT?>
-)
+    var id: Long = -1
+    var child: TargetTestObjectWithComplexProperty? = null
+}

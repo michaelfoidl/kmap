@@ -25,6 +25,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 
+
 /**
  * A subtype of [MappingExpression] that supports removing or ignoring a property of the source object that has no equivalent
  * at the target object.

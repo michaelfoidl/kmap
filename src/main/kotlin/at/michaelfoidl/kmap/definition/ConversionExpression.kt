@@ -19,11 +19,15 @@
 
 package at.michaelfoidl.kmap.definition
 
-import at.michaelfoidl.kmap.exceptions.MappingException
 import at.michaelfoidl.kmap.ReflectionUtilities
-import at.michaelfoidl.kmap.initializable.Initializable
 import at.michaelfoidl.kmap.caching.MappingCache
-import kotlin.reflect.*
+import at.michaelfoidl.kmap.exceptions.MappingException
+import at.michaelfoidl.kmap.initializable.Initializable
+import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty0
+
 
 /**
  * A subtype of [MappingExpression] that supports converting a property of the source object to a property of the target object.
@@ -72,6 +76,7 @@ class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?,
             targetPropertyFunction,
             { sourceProperty: SourcePropertyT? ->
                 if (mappingFunction == null) {
+                    @Suppress("UNCHECKED_CAST")
                     Initializable(sourceProperty as TargetPropertyT)
                 } else {
                     if (sourceProperty == null) {

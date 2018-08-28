@@ -21,10 +21,7 @@ package at.michaelfoidl.kmap.integrationTest
 
 import at.michaelfoidl.kmap.definition.MappingDefinition
 import at.michaelfoidl.kmap.mapper.Mapper
-import at.michaelfoidl.kmap.test.helpers.SourceTestObject
-import at.michaelfoidl.kmap.test.helpers.SourceTestObjectWithCircularReference
-import at.michaelfoidl.kmap.test.helpers.TargetTestObject
-import at.michaelfoidl.kmap.test.helpers.TargetTestObjectWithCircularReference
+import at.michaelfoidl.kmap.test.helpers.*
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldEqual
@@ -65,6 +62,152 @@ class MappingTests {
 
         result2 shouldNotBe null
         result2.string shouldEqual "additional"
+    }
+
+    @Test
+    fun validMappingDefinition_mappingWithConvertedPropertyAndAutoCast_shouldBeSuccessful() {
+
+        // Arrange
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+                                .convert({ it::id }, { it::id })
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<TargetTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        result.id shouldEqual 123
+    }
+
+    @Test
+    fun validMappingDefinition_mappingWithConvertedPropertyAndConversionFunction_shouldBeSuccessful() {
+
+        // Arrange
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+                                .convert({ it::string },
+                                        { it::id },
+                                        {
+                                            it.length
+                                        })
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<TargetTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        result.id shouldEqual 4
+    }
+
+    @Test
+    fun validMappingDefinition_mappingWithConvertedPropertyAndMapper_shouldBeSuccessful() {
+
+        // Arrange
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObjectWithComplexProperty::class, TargetTestObjectWithComplexProperty::class)
+                                .map({ it::child }, { it::child }, this)
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObjectWithComplexProperty(123, SourceTestObjectWithComplexProperty(124))
+
+        // Act
+        val result = mapper.map<TargetTestObjectWithComplexProperty>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        result.child shouldNotBe null
+        result.child shouldBeInstanceOf TargetTestObjectWithComplexProperty::class
+        result.child!!.child shouldBe null
+    }
+
+    @Test
+    fun validMappingDefinition_mappingWithAddedProperty_shouldBeSuccessful() {
+
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+                                .add({ it::additionalProperty }, { "Hi!" })
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<TargetTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        result.additionalProperty shouldEqual "Hi"
+    }
+
+    @Test
+    fun validMappingDefintion_mappingWithRemovedProperty_shouldBeSuccessful() {
+
+        // Arrange
+        var dummy: String? = ""
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+                                .remove({ it::string },
+                                        {
+                                            dummy = it!!
+                                        })
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<TargetTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        dummy shouldEqual "Test"
+    }
+
+    @Test
+    fun validMappingDefintion_mappingWithIgnoredProperty_shouldBeSuccessful() {
+
+        // Arrange
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+                                .ignore { it::string }
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<TargetTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
     }
 
     @Test

@@ -19,54 +19,15 @@
 
 package at.michaelfoidl.kmap.test
 
-import at.michaelfoidl.kmap.caching.MappingCache
 import at.michaelfoidl.kmap.definition.MappingDefinition
 import at.michaelfoidl.kmap.mapper.ConcreteMapper
-import at.michaelfoidl.kmap.test.extensions.map
 import at.michaelfoidl.kmap.test.helpers.*
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldEqual
-import org.amshove.kluent.shouldNotBe
 import org.junit.jupiter.api.Test
 
 
 class MappingDefinitionTests {
-
-    @Test
-    fun validMappingDefinition_mappingWithConversionExpression_shouldBeSuccessful() {
-
-        // Arrange
-        val definition = MappingDefinition(SourceTestObject::class, TargetTestObject::class)
-                .convert({ it::id }, { it::id })
-                .convert({ it::string }, { it::string })
-        val mapper = ConcreteMapper(definition, MappingCache())
-        val sourceObject = SourceTestObject("Test", 123)
-
-        // Act
-        val result = mapper.map(sourceObject)
-
-        // Assert
-        result shouldNotBe null
-        result.string shouldEqual "Test"
-        result.id shouldEqual 123
-    }
-
-    @Test
-    fun validMappingDefinition_mappingWithAdditionExpression_shouldBeSuccessful() {
-
-        // Arrange
-        val definition = MappingDefinition(SourceTestObject::class, TargetTestObject::class)
-                .add({ it::additionalProperty }, { "Hi" })
-        val mapper = ConcreteMapper(definition, MappingCache())
-        val sourceObject = SourceTestObject("Test", 123)
-
-        // Act
-        val result = mapper.map(sourceObject)
-
-        // Assert
-        result shouldNotBe null
-        result.additionalProperty shouldEqual "Hi"
-    }
 
     @Test
     fun validMappingDefinition_shouldApplyForCorrectTypes() {

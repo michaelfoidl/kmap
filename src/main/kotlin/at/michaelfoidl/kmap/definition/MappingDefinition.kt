@@ -30,6 +30,7 @@ import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 import kotlin.reflect.full.memberProperties
 
+
 /**
  * Defines how an object should be mapped. A [MappingDefinition] is created using a builder pattern adding one [MappingExpression]
  * after the other to a collection defining the mapping process.
@@ -120,8 +121,8 @@ class MappingDefinition<SourceT : Any, TargetT : Any>(
         return this
     }
 
-
     // TODO autoMap (just maps the property to the target property with the same name
+
     /**
      * Checks if this [MappingDefinition] can be used for mapping between the [sourceClass] and the [targetClass].
      */

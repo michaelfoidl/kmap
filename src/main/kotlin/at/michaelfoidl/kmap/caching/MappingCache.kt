@@ -23,6 +23,7 @@ import at.michaelfoidl.kmap.initializable.Initializable
 import java.util.*
 import kotlin.reflect.KClass
 
+
 /**
  * Stores recently mapped objects in order to be reused. This is also necessary to prevent stack overflow errors when mapping circular references.
  *

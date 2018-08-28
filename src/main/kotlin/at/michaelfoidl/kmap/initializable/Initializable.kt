@@ -19,6 +19,7 @@
 
 package at.michaelfoidl.kmap.initializable
 
+
 /**
  * Any object that is unknown when creating this instance. This enables storing references to this object although its
  * value will only be known at a later point in time.

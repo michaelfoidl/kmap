@@ -111,3 +111,11 @@ Whenever you find a bug or any other malfunctions, feel free to submit an issue.
 ## Contributing
 
 At the moment, <b>kmap</b> is at an early alpha stage and under heavy development. A lot of things are currently changing (also pretty basic stuff), so Pull Requests do not really make sense yet. Please be patient.
+
+## Version History
+
+- 0.1 Initial version
+  - 0.1.1 Documentation and Refactoring
+    - added KDoc and README
+    - refactored `ConversionExpression` for better error detection support at compile time
+    - smaller fixes (package names, typos, ...)

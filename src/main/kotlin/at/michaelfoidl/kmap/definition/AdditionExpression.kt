@@ -33,7 +33,7 @@ import kotlin.reflect.KProperty
  * @constructor Creates a new [AdditionExpression] defined by a [targetPropertyFunction] returning the target property and
  * a [targetValueFunction] providing the value to which the target property should be set.
  */
-class AdditionExpression<SourceT : Any, TargetT : Any, TargetPropertyT : Any?>(
+internal class AdditionExpression<SourceT : Any, TargetT : Any, TargetPropertyT : Any?>(
         private val targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
         private val targetValueFunction: (SourceT) -> TargetPropertyT?
 ) : MappingExpression<SourceT, TargetT>() {

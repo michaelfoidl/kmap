@@ -30,7 +30,8 @@ import kotlin.reflect.KProperty
  *
  * @since 0.1
  */
-abstract class MappingExpression<SourceT : Any, TargetT : Any> {
+@PublishedApi
+internal abstract class MappingExpression<SourceT : Any, TargetT : Any> {
 
     private var isConverted: Boolean = false
 

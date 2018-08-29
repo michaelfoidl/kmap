@@ -29,7 +29,8 @@ import kotlin.reflect.KClass
  *
  * @since 0.1
  */
-class MappingCache {
+@PublishedApi
+internal class MappingCache {
     private val cache: MutableList<MappingCacheEntry<*, *>> = ArrayList()
 
     /**

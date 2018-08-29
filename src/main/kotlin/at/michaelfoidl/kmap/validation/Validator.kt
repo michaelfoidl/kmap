@@ -31,7 +31,7 @@ import kotlin.reflect.full.memberProperties
  *
  * @since 0.1.2
  */
-object Validator {
+internal object Validator {
 
     /**
      * Checks, if the given [mappingDefinition] is valid for mapping between the [sourceClass] and the [targetClass].
@@ -69,7 +69,7 @@ object Validator {
             if (!areAllRequiredTargetPropertiesMapped) {
                 result.addError("Not all required properties of target class " + targetClass.qualifiedName + " are mapped.")
             }
-            
+
             val areAllTargetPropertiesMapped = targetClass.memberProperties
                     .filter { it is KMutableProperty<*> }
                     .all { property ->

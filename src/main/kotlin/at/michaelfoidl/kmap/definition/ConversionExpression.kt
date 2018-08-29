@@ -38,7 +38,8 @@ import kotlin.reflect.KProperty0
  * a [targetPropertyFunction] returning the target property, a [conversionFunction] providing the conversion logic and a
  * [executionFunction] writing the results of the conversion process to the target object.
  */
-class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?, TargetPropertyT : Any?>(
+@PublishedApi
+internal class ConversionExpression<SourceT : Any, TargetT : Any, SourcePropertyT : Any?, TargetPropertyT : Any?>(
         private val sourcePropertyFunction: (SourceT) -> KProperty0<SourcePropertyT?>,
         private val targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
         private val conversionFunction: (SourcePropertyT?) -> Initializable<TargetPropertyT?>,

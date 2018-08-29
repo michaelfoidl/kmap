@@ -19,18 +19,18 @@
 
 package at.michaelfoidl.kmap.definition
 
-import at.michaelfoidl.kmap.ReflectionUtilities
 import at.michaelfoidl.kmap.initializable.Initializable
 import at.michaelfoidl.kmap.mapper.Mapper
 import at.michaelfoidl.kmap.validation.ValidationResult
 import at.michaelfoidl.kmap.validation.Validator
 import java.util.*
-import kotlin.reflect.*
-import kotlin.reflect.full.memberProperties
+import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KProperty0
 
 
 /**
- * Defines how an object should be mapped. A [MappingDefinition] is created using a builder pattern adding one [MappingExpression]
+ * Defines how an object should be mapped. A [MappingDefinition] is created using a builder pattern adding one expression
  * after the other to a collection defining the mapping process.
  *
  * @since 0.1

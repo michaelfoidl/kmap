@@ -20,7 +20,6 @@
 package at.michaelfoidl.kmap.test
 
 import at.michaelfoidl.kmap.definition.MappingDefinition
-import at.michaelfoidl.kmap.mapper.ConcreteMapper
 import at.michaelfoidl.kmap.test.helpers.*
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldEqual

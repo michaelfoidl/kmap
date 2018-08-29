@@ -23,11 +23,9 @@ import at.michaelfoidl.kmap.ReflectionUtilities
 import at.michaelfoidl.kmap.initializable.Initializable
 import at.michaelfoidl.kmap.mapper.Mapper
 import at.michaelfoidl.kmap.validation.ValidationResult
+import at.michaelfoidl.kmap.validation.Validator
 import java.util.*
-import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KMutableProperty0
-import kotlin.reflect.KProperty0
+import kotlin.reflect.*
 import kotlin.reflect.full.memberProperties
 
 
@@ -121,8 +119,6 @@ class MappingDefinition<SourceT : Any, TargetT : Any>(
         return this
     }
 
-    // TODO autoMap (just maps the property to the target property with the same name
-
     /**
      * Checks if this [MappingDefinition] can be used for mapping between the [sourceClass] and the [targetClass].
      */
@@ -130,63 +126,12 @@ class MappingDefinition<SourceT : Any, TargetT : Any>(
         return sourceClass == this.sourceClass && targetClass == this.targetClass
     }
 
-    // TODO move validation to extra class
-
     /**
      * Checks, if the configured [MappingDefinition] is valid for mapping between the [sourceClass] and the [targetClass].
      *
      * @return the result of the validation process.
      */
     fun validate(sourceClass: KClass<SourceT>, targetClass: KClass<TargetT>): ValidationResult {
-
-        val result = ValidationResult()
-
-        val isSourceClassValid = ReflectionUtilities.validateThatEmptyPrimaryConstructorExists(sourceClass)
-        if (!isSourceClassValid) {
-            result.addError("No empty or optional-parameter-only primary constructor was found for class " + sourceClass.qualifiedName + "")
-        }
-
-        val isTargetClassValid = ReflectionUtilities.validateThatEmptyPrimaryConstructorExists(targetClass)
-        if (!isTargetClassValid) {
-            result.addError("No empty or optional-parameter-only primary constructor was found for class " + targetClass.qualifiedName + "")
-        }
-
-        if (isTargetClassValid) {
-            val areAllRequiredTargetPropertiesMapped = targetClass.memberProperties
-                    .filter { it.isLateinit }
-                    .all { property ->
-                        this.mappingExpressions.any { expression ->
-                            expression.mapsToProperty(targetClass, property)
-                        }
-                    }
-            if (!areAllRequiredTargetPropertiesMapped) {
-                result.addError("Not all required properties of target class " + targetClass.qualifiedName + " are mapped.")
-            }
-
-
-            val areAllTargetPropertiesMapped = targetClass.memberProperties
-                    .filter { it is KMutableProperty<*> }
-                    .all { property ->
-                        this.mappingExpressions.any { expression ->
-                            expression.mapsToProperty(targetClass, property)
-                        }
-                    }
-            if (!areAllTargetPropertiesMapped) {
-                result.addWarning("Not all properties of target class " + targetClass.qualifiedName + " are mapped.")
-            }
-        }
-
-        if (isSourceClassValid) {
-            val areAllSourcePropertiesMapped = sourceClass.memberProperties.all { property ->
-                this.mappingExpressions.any { expression ->
-                    expression.mapsFromProperty(sourceClass, property)
-                }
-            }
-            if (!areAllSourcePropertiesMapped) {
-                result.addWarning("Not all properties of source class " + sourceClass.qualifiedName + " are mapped.")
-            }
-        }
-
-        return result
+        return Validator.validate(this, sourceClass, targetClass)
     }
 }

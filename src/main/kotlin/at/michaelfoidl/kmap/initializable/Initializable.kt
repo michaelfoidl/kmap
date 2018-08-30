@@ -30,8 +30,9 @@ package at.michaelfoidl.kmap.initializable
 class Initializable<T : Any?>() {
 
     /**
-     * @constructor Creates a new, already initialized instance. If you do not have a specific reason for storing the [value]
-     * inside an [Initializable], consider declaring it directly.
+     * @constructor Creates a new, already initialized instance. If you do not have a specific reason for storing the
+     * value inside an [Initializable], consider declaring it directly.
+     * @param value the value this instance should be initialized with.
      */
     constructor(value: T?) : this() {
         initialize(value)
@@ -60,7 +61,9 @@ class Initializable<T : Any?>() {
         }
 
     /**
-     * Initializes this instance with a new [value]. If it already is initialized, the old value is overridden.
+     * Initializes this instance with a new value. If it already is initialized, the old value is overridden.
+     *
+     * @param value the value this instance should be initialized with.
      */
     fun initialize(value: T?) {
         this.isInitialized = true

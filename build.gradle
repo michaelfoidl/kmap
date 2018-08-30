@@ -52,6 +52,7 @@ dokka {
     outputFormat = 'html'
     outputDirectory = "$buildDir/javadoc"
     jdkVersion = 8
+    includeNonPublic = false
 }
 
 

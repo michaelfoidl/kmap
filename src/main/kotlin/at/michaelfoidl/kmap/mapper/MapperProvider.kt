@@ -28,6 +28,8 @@ import kotlin.reflect.KClass
  * Provides and stores [ConcreteMapper]s to be reused.
  *
  * @since 0.1
+ * @constructor Creates a new [MapperProvider].
+ * @property mappingDefinitionFunction A function that provides a pool of [MappingDefinition]s to be used for mapping.
  */
 @PublishedApi
 internal class MapperProvider(
@@ -37,18 +39,26 @@ internal class MapperProvider(
     private val cache: HashMap<Int, ConcreteMapper<*, *>?> = HashMap()
 
     /**
-     * Provides a mapper for mapping between [SourceT] and [TargetT] with the given [context]. If the mapper does already
-     * exist in the store, it is reused. A single [MappingCache] is shared between all mappers.
+     * Provides a mapper for mapping between [SourceT] and [TargetT] with the given context. If the mapper does already
+     * exist in the store and the request is made with the same context, it is reused. A single [MappingCache] is shared
+     * between all mappers.
      *
-     * @return a mapper that can map between the given types.
+     * @param context any object that is used as an indicator if an existing mapper should be reused.
+     * @return a mapper that can map between instances of the given types.
      */
     inline fun <reified SourceT : Any, reified TargetT : Any> provideMapper(context: Any): ConcreteMapper<SourceT, TargetT> {
         return provideMapper(SourceT::class, TargetT::class, context)
     }
 
     /**
-     * Provides a mapper for mapping between [sourceClass] and [targetClass] with the given [context]. If the mapper does
-     * already exist in the store, it is reused. A single [MappingCache] is shared between all mappers.
+     * Provides a mapper for mapping between the given source class and the given target class with the given context.
+     * If the mapper does already exist in the store and the request is made with the same context, it is reused. A
+     * single [MappingCache] is shared between all mappers.
+     *
+     * @param sourceClass the source class the mapper should be created for.
+     * @param targetClass the target class the mapper should be created for.
+     * @param context any object that is used as an indicator if an existing mapper should be reused.
+     * @return a mapper that can map between instances of the given classes.
      */
     fun <SourceT : Any, TargetT : Any> provideMapper(sourceClass: KClass<out SourceT>, targetClass: KClass<out TargetT>, context: Any): ConcreteMapper<SourceT, TargetT> {
         val result: ConcreteMapper<*, *> =

@@ -25,19 +25,22 @@ import kotlin.reflect.KClass
 
 
 /**
- * Stores recently mapped objects in order to be reused. This is also necessary to prevent stack overflow errors when mapping circular references.
+ * Stores recently mapped objects in order to be reused. This is also necessary to prevent stack overflow errors when
+ * mapping circular references.
  *
  * @since 0.1
+ * @constructor Creates a new, empty cache instance.
  */
 @PublishedApi
 internal class MappingCache {
     private val cache: MutableList<MappingCacheEntry<*, *>> = ArrayList()
 
     /**
-     * Checks if there is an entry corresponding to the [source] object and the [targetClass] in the cache.
+     * Checks if there is an entry corresponding to the source object and the class of the target object in the cache.
      *
+     * @param source the source object for which a corresponding entry should be found.
+     * @param targetClass the class of the target object for which a corresponding entry should be found.
      * @return the cached entry or `null`, if none was found.
-     * @see MappingCacheEntry
      */
     fun <SourceT : Any, TargetT : Any> getEntry(source: SourceT, targetClass: KClass<TargetT>): Initializable<TargetT?>? {
         val cachedElement = this.cache.find {
@@ -52,10 +55,12 @@ internal class MappingCache {
     }
 
     /**
-     * Checks if there is an entry correponding to the [source] object and the [targetClass] in the cache. If there is not, a new entry is created.
+     * Checks if there is an entry correponding to the source object and the class of the target object in the cache. If
+     * there is not, a new entry is created.
      *
+     * @param source the source object for which a corresponding entry should be created.
+     * @param targetClass the class of the target object for which a corresponding entry should be created.
      * @return the entry, either newly created or fetched from the cache.
-     * @see MappingCacheEntry
      */
     fun <SourceT : Any, TargetT : Any> createEntryIfNotExists(source: SourceT, targetClass: KClass<TargetT>): Initializable<TargetT?> {
         val cached = getEntry(source, targetClass)

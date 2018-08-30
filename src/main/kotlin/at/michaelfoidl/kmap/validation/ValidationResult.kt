@@ -40,6 +40,8 @@ class ValidationResult {
 
     /**
      * Indicates if any errors occurred during the validation.
+     *
+     * @return if any errors occurred.
      */
     fun isFailure(): Boolean {
         return !this.errors.isEmpty()
@@ -47,6 +49,8 @@ class ValidationResult {
 
     /**
      * Indicates if only warnings occurred during the validation.
+     *
+     * @return if only warnings occurred.
      */
     fun isWarning(): Boolean {
         return this.errors.isEmpty() && !this.warnings.isEmpty()
@@ -54,20 +58,26 @@ class ValidationResult {
 
     /**
      * Indicates if no warnings and no errors occurred during the validation.
+     *
+     * @return if neither warnings nor errors occurred.
      */
     fun isSuccess(): Boolean {
         return this.errors.isEmpty() && this.warnings.isEmpty()
     }
 
     /**
-     * Adds a new [errorMessage] to the list of errors.
+     * Adds a new error to the list of errors.
+     *
+     * @param errorMessage a description of the error.
      */
     internal fun addError(errorMessage: String) {
         this.errors.add("ERROR: $errorMessage")
     }
 
     /**
-     * Adds a new [warningMessage] to the list of warnings.
+     * Adds a new warning to the list of warnings.
+     *
+     * @param warningMessage a description of the warning.
      */
     internal fun addWarning(warningMessage: String) {
         this.warnings.add("WARNING: $warningMessage")

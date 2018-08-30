@@ -23,9 +23,14 @@ import at.michaelfoidl.kmap.initializable.Initializable
 
 
 /**
- * Represents a single entry in the cache consisting of the [source] object, the [targetClassName] and the [target] which is the result of the mapping process.
+ * Represents a single entry in the cache consisting of the source object, the name of the class of the target object
+ * and the target object itself which is the result of the mapping process.
  *
  * @since 0.1
+ * @constructor Creates a new entry with the given values that can then be added to the cache.
+ * @property source The source object.
+ * @property targetClassName The name of the class of the target object.
+ * @property target The mapped target object.
  */
 internal class MappingCacheEntry<SourceT : Any?, TargetT : Any?>(
         var source: SourceT,

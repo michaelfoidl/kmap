@@ -40,8 +40,9 @@ abstract class Mapper {
         private set
 
     /**
-     * Maps the given [source] object to the defined target type [TargetT].
+     * Maps the given source object to the defined target type.
      *
+     * @param source the source object to be mapped.
      * @return the mapped object.
      */
     inline fun <reified TargetT : Any> map(source: Any): TargetT {
@@ -52,9 +53,11 @@ abstract class Mapper {
     }
 
     /**
-     * Searches in the pool of given definitions for a [MappingDefinition] capable of mapping an object of [sourceClass] to
-     * an object of [targetClass].
+     * Searches in the pool of given definitions for a [MappingDefinition] capable of mapping an object of the given
+     * source class to an object of the given target class.
      *
+     * @param sourceClass the class of the source object the definition should be found for.
+     * @param targetClass the class of the target object the definition should be found for.
      * @return the [MappingDefinition] for mapping between the given types.
      * @throws MappingException if there is no [MappingDefinition] matching the requirements.
      */
@@ -66,6 +69,8 @@ abstract class Mapper {
 
     /**
      * Provides the pool of [MappingDefinition]s defining the mapping processes the mapper can execute.
+     *
+     * @return the pool of [MappingDefinition]s the mapper can use.
      */
     abstract fun provideDefinitions(): List<MappingDefinition<*, *>>
 }

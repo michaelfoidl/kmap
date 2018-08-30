@@ -34,8 +34,11 @@ import kotlin.reflect.full.memberProperties
 internal object Validator {
 
     /**
-     * Checks, if the given [mappingDefinition] is valid for mapping between the [sourceClass] and the [targetClass].
+     * Checks, if the given [MappingDefinition] is valid for mapping between the given classes.
      *
+     * @param mappingDefinition the definition to be validated.
+     * @param sourceClass the source class the definition should be validated for.
+     * @param targetClass the target class the definition should be validated for.
      * @return the result of the validation process.
      */
     fun <SourceT : Any, TargetT : Any> validate(

@@ -36,16 +36,26 @@ However, when the target `string` should contain the value of the source `id`, y
 MappingDefinition(SourceTestObject::class, TargetTestObject::class)
     .convert({ it::id },
             { it::string },
-            { it!!.toString() })
+            { it.toString() })
 ```
 
-Here, the third lambda expression takes the source value and returns the result as the target type.
+Here, the third lambda expression takes the source value and returns the result as the target type. In case of the source property being nullable, a so-called default-value-function can be defined. It provides a value to which the target property is set if the source value equals `null`:
+
+```
+MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+    .convert({ it::nullableProperty },
+            { it::string },
+            { it.toString() },
+            { "undefined" })
+```
+
+If no default-value-function is provided, `null` is returned.
 
 For the case that the property to be mapped is of a complex type that has to be mapped by itself, you should use submappers:
 
 ```
 MappingDefinition(SourceTestObject::class, TargetTestObject::class)
-    .convert({ it::complexObject },
+    .map({ it::complexObject },
             { it::complexObject },
             { complexObjectMapper })
 ```
@@ -106,17 +116,25 @@ val result = mapper.map<TargetTestObject>(sourceObject)
 
 ## Bug Reporting
 
-Whenever you find a bug or any other malfunctions, feel free to submit an issue. Please make sure to describe the circumstances as detailed as possible, so that fixing the bug becomes easier.
+Whenever you find a bug or any other malfunctions, feel free to submit an issue. Please make sure to describe the circumstances as detailed as possible, so that fixing the bug becomes easier. Also, please label the issue with `Bug`.
 
 ## Contributing
 
-At the moment, <b>kmap</b> is at an early alpha stage and under heavy development. A lot of things are currently changing (also pretty basic stuff), so Pull Requests do not really make sense yet. Please be patient.
+At the moment, <b>kmap</b> is at beta stage and still under development. The features are currently tested by integration them in another project <b>kmap</b> originated from.
+
+Feel free to contribute your ideas in form of either:
+- Issues labelled with `Proposal`
+- Merge Requests
 
 ## Version History
 
-- 0.1 Initial version
+- 0.1 - Initial version
 
-- 0.1.1 Documentation and Refactoring
+- 0.1.1 - Documentation and Refactoring
   - added KDoc and README
   - refactored `ConversionExpression` for better error detection support at compile time
   - smaller fixes (package names, typos, ...)
+
+- 0.1.2 - Documentation
+  - improvements in the documentation
+  - README updates

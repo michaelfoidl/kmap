@@ -115,6 +115,34 @@ class MappingTests {
     }
 
     @Test
+    fun validMappingDefinition_mappingWithConvertedPropertyAndDefaultValueFunction_shouldBeSuccessful() {
+
+        // Arrange
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(TargetTestObject::class, SourceTestObject::class)
+                                .convert({ it::nullableProperty },
+                                        { it::string },
+                                        {
+                                            it.toString()
+                                        },
+                                        { "Hi!" })
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<SourceTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        result.string shouldEqual "Hi!"
+    }
+
+    @Test
     fun validMappingDefinition_mappingWithConvertedPropertyAndMapper_shouldBeSuccessful() {
 
         // Arrange

@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.1
+ * version 0.1.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -32,7 +32,9 @@ import java.util.*
  * The direction cannot be reversed.
  *
  * @since 0.1
- * @constructor Creates a new instance using the provided [MappingDefinition] and the given [cache].
+ * @constructor Creates a new instance with a single [MappingDefinition] to use.
+ * @param mappingDefinition the definition that should be used for mapping.
+ * @param cache the cache to be used for mapping.
  */
 @PublishedApi
 internal class ConcreteMapper<SourceT : Any, TargetT : Any>(
@@ -44,8 +46,9 @@ internal class ConcreteMapper<SourceT : Any, TargetT : Any>(
     internal var mappingExpressions: ArrayList<MappingExpression<SourceT, TargetT>> = mappingDefinition.mappingExpressions
 
     /**
-     * Executes the conversion step of the mapping process for every [MappingExpression] using the given [source].
+     * Executes the conversion step of the mapping process for every [MappingExpression].
      *
+     * @param source the source object that should be mapped.
      * @return the result of the conversion step which might not be initialized yet.
      */
     inline fun <reified MappingTargetT : TargetT> convert(source: SourceT): Initializable<MappingTargetT?> {
@@ -62,8 +65,9 @@ internal class ConcreteMapper<SourceT : Any, TargetT : Any>(
     }
 
     /**
-     * Executes the execution step of the mapping process for every [MappingExpression] using the [converted] value from
-     * the conversion step.
+     * Executes the execution step of the mapping process for every [MappingExpression].
+     *
+     * @param converted the result of the conversion step to be used in the execution step.
      */
     inline fun <reified MappingTargetT : TargetT> execute(converted: Initializable<in MappingTargetT?>) {
         if (!converted.isInitialized) {

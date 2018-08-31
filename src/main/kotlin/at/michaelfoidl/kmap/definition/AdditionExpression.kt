@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.1
+ * version 0.1.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -27,13 +27,15 @@ import kotlin.reflect.KProperty
 
 
 /**
- * A subtype of [MappingExpression] that supports adding a new property to the target object that has no equivalent at the source object.
+ * A subtype of [MappingExpression] that supports adding a new property to the target object that has no equivalent at
+ * the source object.
  *
  * @since 0.1
- * @constructor Creates a new [AdditionExpression] defined by a [targetPropertyFunction] returning the target property and
- * a [targetValueFunction] providing the value to which the target property should be set.
+ * @constructor Creates a new [AdditionExpression] that can then be added to a [MappingDefinition].
+ * @property targetPropertyFunction A function that returns the property to be added.
+ * @property targetValueFunction A function that returns the value the target property should be set to.
  */
-class AdditionExpression<SourceT : Any, TargetT : Any, TargetPropertyT : Any?>(
+internal class AdditionExpression<SourceT : Any, TargetT : Any, TargetPropertyT : Any?>(
         private val targetPropertyFunction: (TargetT) -> KMutableProperty0<out TargetPropertyT?>,
         private val targetValueFunction: (SourceT) -> TargetPropertyT?
 ) : MappingExpression<SourceT, TargetT>() {

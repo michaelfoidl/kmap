@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.1
+ * version 0.1.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -25,5 +25,8 @@ package at.michaelfoidl.kmap.exceptions
  * information.
  *
  * @since 0.1
+ * @constructor Creates a new [Exception].
+ * @param message the message describing the error that has occurred.
+ * @param cause the cause that has lead to this error.
  */
-class MappingException(message: String? = null, cause: Throwable? = null) : Exception(message, cause)
+class MappingException(message: String? = null, cause: Throwable? = null) : kotlin.Exception(message, cause)

@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.1
+ * version 0.1.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -111,5 +111,29 @@ class ConversionExpressionTests {
 
         // Assert
         func shouldThrow MappingException::class
+    }
+
+    @Test
+    fun conversionExpressionWithDefaultValueFunction_mappingNullObject_shouldUseDefaultValue() {
+
+        // Arrange
+        val expression = ConversionExpression<TargetTestObject, SourceTestObject, Int?, String>(
+                { it::nullableProperty },
+                { it::string },
+                { it.toString() },
+                { -> "Hi!" }
+
+        )
+        val source = TargetTestObject("string", 0, "abc")
+        val target = SourceTestObject("abc", 1)
+        val cache = MappingCache()
+
+        // Act
+
+        expression.convert(source, cache)
+        expression.execute(target)
+
+        // Assert
+        target.string shouldEqual "Hi!"
     }
 }

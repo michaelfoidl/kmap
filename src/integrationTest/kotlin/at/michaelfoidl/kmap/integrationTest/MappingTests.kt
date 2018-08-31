@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.1
+ * version 0.1.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -112,6 +112,34 @@ class MappingTests {
         // Assert
         result shouldNotBe null
         result.id shouldEqual 4
+    }
+
+    @Test
+    fun validMappingDefinition_mappingWithConvertedPropertyAndDefaultValueFunction_shouldBeSuccessful() {
+
+        // Arrange
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(TargetTestObject::class, SourceTestObject::class)
+                                .convert({ it::nullableProperty },
+                                        { it::string },
+                                        {
+                                            it.toString()
+                                        },
+                                        { "Hi!" })
+                )
+            }
+
+        }
+        val sourceObject = SourceTestObject("Test", 123)
+
+        // Act
+        val result = mapper.map<SourceTestObject>(sourceObject)
+
+        // Assert
+        result shouldNotBe null
+        result.string shouldEqual "Hi!"
     }
 
     @Test

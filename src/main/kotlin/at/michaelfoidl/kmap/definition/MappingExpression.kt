@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.1
+ * version 0.1.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -30,12 +30,15 @@ import kotlin.reflect.KProperty
  *
  * @since 0.1
  */
-abstract class MappingExpression<SourceT : Any, TargetT : Any> {
+@PublishedApi
+internal abstract class MappingExpression<SourceT : Any, TargetT : Any> {
 
     private var isConverted: Boolean = false
 
     /**
-     * Calls the conversion step of the mapping process using the [source] object and the [cache].
+     * Calls the conversion step of the mapping process and stores the result.
+     * @param source the source object.
+     * @param cache the cache to be used for the conversion process.
      */
     @PublishedApi
     internal fun convert(source: SourceT, cache: MappingCache) {
@@ -44,9 +47,10 @@ abstract class MappingExpression<SourceT : Any, TargetT : Any> {
     }
 
     /**
-     * Calls the execution step of the mapping process using the [target] object. The execution step can only be executed
-     * after the conversion step.
+     * Calls the execution step of the mapping process using the result of the conversion step. Therefore, the execution
+     * step can only be executed after the conversion step.
      *
+     * @param target the target object.
      * @throws MappingException if the conversion step has not been executed yet.
      */
     @PublishedApi
@@ -58,26 +62,37 @@ abstract class MappingExpression<SourceT : Any, TargetT : Any> {
     }
 
     /**
-     * Represents the conversion step of the mapping process where the value of the source property of the [source] object
-     * is fetched and converted to the target type using the [cache].
+     * Represents the conversion step of the mapping process where the value of the source property is fetched and
+     * converted to the target type.
+     *
+     * @param source the source object.
+     * @param cache the cache to be used for the conversion process.
      */
     protected abstract fun doConvert(source: SourceT, cache: MappingCache)
 
     /**
      * Represents the execution step of the mapping process where the result of the conversion step is written to the
-     * [target] object.
+     * target object.
+     *
+     * @param target the target object.
      */
     protected abstract fun doExecute(target: TargetT)
 
     /**
-     * Checks, if the [property] of the given [elementClass] is the target property of this [MappingExpression]. Note
+     * Checks, if the given property of the given class is the target property of this [MappingExpression]. Note
      * that some expressions might not have a target property at all.
+     *
+     * @param elementClass the class for which the test should be done.
+     * @param property the property for which the test should be done.
      */
     internal abstract fun mapsToProperty(elementClass: KClass<TargetT>, property: KProperty<*>): Boolean
 
     /**
-     * Checks, if the [property] of the given [elementClass] is the source property of this [MappingExpression]. Note
+     * Checks, if the given property of the given class is the source property of this [MappingExpression]. Note
      * that some expressions might not have a source property at all.
+     *
+     * @param elementClass the class for which the test should be done.
+     * @param property the property for which the test should be done.
      */
     internal abstract fun mapsFromProperty(elementClass: KClass<SourceT>, property: KProperty<*>): Boolean
 }

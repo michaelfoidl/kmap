@@ -3,9 +3,7 @@ image: openjdk:8-jdk
 before_script:
   - export ENV=gitlab-ci
   - chmod +x ./gradlew
-
-before_script:
-    - export GRADLE_USER_HOME=`pwd`/.gradle
+  - export GRADLE_USER_HOME=`pwd`/.gradle
 
 cache:
   paths:

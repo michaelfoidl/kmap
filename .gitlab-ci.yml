@@ -3,13 +3,14 @@ image: openjdk:8-jdk
 before_script:
   - export ENV=gitlab-ci
   - chmod +x ./gradlew
-  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - export GRADLE_USER_HOME=/cache/.gradle
 
 cache:
   paths:
-     - .gradle/wrapper
-     - .gradle/caches
-
+    - $GRADLE_USER_HOME/caches/
+    - $GRADLE_USER_HOME/wrapper/
+    - $GRADLE_USER_HOME/build-cache/
+    
 stages:
   - build
   - test

@@ -1,11 +1,18 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test" type="JUnit" factoryName="JUnit">
-    <module name="kmap_test" />
-    <option name="PACKAGE_NAME" value="" />
+  <configuration default="false" name="Test" type="JUnit" factoryName="JUnit" show_console_on_std_err="true" show_console_on_std_out="true">
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+    <option name="PACKAGE_NAME" value="at.michaelfoidl.kmap" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
-    <option name="TEST_OBJECT" value="package" />
+    <option name="TEST_OBJECT" value="pattern" />
     <option name="PARAMETERS" value="" />
+    <option name="TEST_SEARCH_SCOPE">
+      <value defaultName="wholeProject" />
+    </option>
+    <patterns>
+      <pattern testClass="^(.*Tests$).*$" />
+    </patterns>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

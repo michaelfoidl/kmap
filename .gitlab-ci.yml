@@ -7,10 +7,9 @@ before_script:
 
 cache:
   paths:
-    - $GRADLE_USER_HOME/caches/
-    - $GRADLE_USER_HOME/wrapper/
-    - $GRADLE_USER_HOME/build-cache/
-    
+    - /cache/.gradle/caches/
+    - /cache/.gradle/wrapper/
+
 stages:
   - build
   - test

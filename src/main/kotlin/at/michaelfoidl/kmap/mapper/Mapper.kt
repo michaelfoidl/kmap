@@ -46,9 +46,20 @@ abstract class Mapper {
      * @return the mapped object.
      */
     inline fun <reified TargetT : Any> map(source: Any): TargetT {
-        val concreteMapper = this.mapperProvider.provideMapper(source::class, TargetT::class, source)
-        val result = concreteMapper.convert<TargetT>(source)
-        concreteMapper.execute(result)
+        return map(source, TargetT::class)
+    }
+
+    /**
+     * Maps the given source object to the given target class.
+     *
+     * @param source the source object to be mapped.
+     * @param targetClass the class of the target object.
+     * @return the mapped object.
+     */
+    fun <TargetT: Any> map(source: Any, targetClass: KClass<TargetT>): TargetT {
+        val concreteMapper = this.mapperProvider.provideMapper(source::class, targetClass, source)
+        val result = concreteMapper.convert(source, targetClass)
+        concreteMapper.execute(result, targetClass)
         return result.value!!
     }
 

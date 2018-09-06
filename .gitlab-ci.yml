@@ -12,20 +12,32 @@ stages:
 build:
   stage: build 
   script:
-    - ./gradlew build
+    - ./gradlew assemble
   artifacts:
+    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
     paths:
     - build/libs/
+    - build/classes/
 
-tests:
+unitTests:
   stage: test
+  dependencies:
+    - build
   script:
     - ./gradlew test
+
+integrationTests:
+  stage: test
+  dependencies:
+    - build
+  script:
     - ./gradlew integrationTest
 
 publish:
   stage: publish
   only:
     - master
+  dependencies:
+    - build
   script:
     - ./gradlew bintrayUpload -Dbintray.user=michaelfoidl -Dbintray.key=$BINTRAY_KEY

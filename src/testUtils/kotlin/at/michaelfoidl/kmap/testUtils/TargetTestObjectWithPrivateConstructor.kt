@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.helpers
+package at.michaelfoidl.kmap.testUtils
 
 class TargetTestObjectWithPrivateConstructor private constructor() {
     constructor(string: String, id: Long) : this() {

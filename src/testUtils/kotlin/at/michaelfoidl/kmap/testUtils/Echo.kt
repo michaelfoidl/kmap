@@ -17,16 +17,9 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.helpers
+package at.michaelfoidl.kmap.testUtils
 
-class TargetTestObjectWithCircularReference private constructor() {
-    constructor(id: Long, child: TargetTestObjectWithCircularReference? = null, parent: TargetTestObjectWithCircularReference? = null) : this() {
-        this.id = id
-        this.child = child
-        this.parent = parent
-    }
 
-    var id: Long = -1
-    var child: TargetTestObjectWithCircularReference? = null
-    var parent: TargetTestObjectWithCircularReference? = null
+interface Echo {
+    fun <T: Any> echo(value: T): T
 }

@@ -17,9 +17,14 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.helpers
+package at.michaelfoidl.kmap.testUtils
 
-class TargetTestObjectWithDefaultConstructor(
-        var string: String = "",
-        var id: Long = 0
-)
+class TargetTestObjectWithComplexProperty private constructor() {
+    constructor(id: Long, child: TargetTestObjectWithComplexProperty? = null) : this() {
+        this.id = id
+        this.child = child
+    }
+
+    var id: Long = -1
+    var child: TargetTestObjectWithComplexProperty? = null
+}

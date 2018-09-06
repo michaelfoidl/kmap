@@ -9,12 +9,16 @@ buildscript {
         VERSION = '0.1.2'
 
         kotlin_version = '1.2.61'
-
         kluent_version = '1.40'
         junit_version = '5.2.0'
-
         bintray_version = '1.8.4'
         dokka_version = '0.9.17'
+
+        kotlin_core = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+        kotlin_reflection = "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+        junit_api = "org.junit.jupiter:junit-jupiter-api:$junit_version"
+        junit_engine = "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+        kluent = "org.amshove.kluent:kluent:$kluent_version"
     }
 
     dependencies {
@@ -38,13 +42,11 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
-    testImplementation "org.amshove.kluent:kluent:$kluent_version"
+tasks.withType(Test) {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 dokka {
@@ -55,53 +57,75 @@ dokka {
     includeNonPublic = false
 }
 
-
 // Source Set
 
 sourceSets {
     main {
-        java.srcDirs = ['src/main/kotlin']
+        java.srcDir 'src/main/kotlin'
+    }
+    testUtils {
+        java.srcDir 'src/testUtils/kotlin'
+        compileClasspath = sourceSets.main.output
+        runtimeClasspath = output + compileClasspath
     }
     test {
-        java.srcDirs = ['src/test/kotlin']
+        java.srcDir 'src/test/kotlin'
+        compileClasspath += sourceSets.testUtils.output
+        runtimeClasspath += sourceSets.testUtils.output
     }
     integrationTest {
-        java {
-            srcDirs = ['src/integrationTest/kotlin']
-            compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
-            runtimeClasspath += output + compileClasspath
-        }
+        java.srcDir 'src/integrationTest/kotlin'
+        compileClasspath += sourceSets.main.output + sourceSets.testUtils.output + configurations.integrationTestCompile
+        runtimeClasspath += output + compileClasspath + sourceSets.testUtils.output + configurations.integrationTestRuntime
     }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom compile, testCompile
+    integrationTestRuntime.extendsFrom runtime, testRuntime, integrationTestCompile
 }
 
 idea {
     module {
-        testSourceDirs += file('src/integrationTest/kotlin')
+        testSourceDirs += sourceSets.integrationTest.kotlin.srcDirs
+        testSourceDirs += sourceSets.testUtils.kotlin.srcDirs
     }
 }
 
 task integrationTest(type: Test) {
-    description = "Run integration tests (located in src/integrationTest/...)."
+    description = "Runs the integration tests (located in src/integrationTest/...)."
     group = 'verification'
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
-dependencies {
-    integrationTestCompile sourceSets.test.output
-}
+check.dependsOn integrationTest
 
+dependencies {
+    implementation kotlin_core
+    implementation kotlin_reflection
+
+    testImplementation junit_api
+    testRuntimeOnly junit_engine
+    testImplementation kluent
+
+    integrationTestImplementation junit_api
+    integrationTestRuntimeOnly junit_engine
+    integrationTestImplementation kluent
+}
 
 // Publishing
 
 version = VERSION
 
 task sourcesJar(type: Jar, dependsOn: classes) {
+    description = "Builds the sources.jar archive for publishing."
     classifier = 'sources'
     from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: dokka) {
+    description = "Builds the javadoc.jar archive for publishing."
     classifier = 'javadoc'
     from dokka.outputDirectory
 }

@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.helpers
+package at.michaelfoidl.kmap.testUtils
 
 class SourceTestObjectWithCircularReference private constructor() {
     constructor(id: Long, child: SourceTestObjectWithCircularReference? = null, parent: SourceTestObjectWithCircularReference? = null): this() {

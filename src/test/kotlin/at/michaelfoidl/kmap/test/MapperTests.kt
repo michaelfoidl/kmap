@@ -22,9 +22,9 @@ package at.michaelfoidl.kmap.test
 import at.michaelfoidl.kmap.definition.MappingDefinition
 import at.michaelfoidl.kmap.exceptions.MappingException
 import at.michaelfoidl.kmap.mapper.Mapper
-import at.michaelfoidl.kmap.test.helpers.SourceTestObject
-import at.michaelfoidl.kmap.test.helpers.TargetTestObject
-import at.michaelfoidl.kmap.test.helpers.TargetTestObjectWithPrivateConstructor
+import at.michaelfoidl.kmap.testUtils.SourceTestObject
+import at.michaelfoidl.kmap.testUtils.TargetTestObject
+import at.michaelfoidl.kmap.testUtils.TargetTestObjectWithPrivateConstructor
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test

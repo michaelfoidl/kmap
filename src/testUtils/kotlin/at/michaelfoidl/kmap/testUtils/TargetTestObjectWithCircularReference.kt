@@ -17,18 +17,16 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.helpers
+package at.michaelfoidl.kmap.testUtils
 
-class TargetTestObject() {
-    constructor(string: String, id: Long, additionalProperty: String): this() {
-        this.string = string
+class TargetTestObjectWithCircularReference private constructor() {
+    constructor(id: Long, child: TargetTestObjectWithCircularReference? = null, parent: TargetTestObjectWithCircularReference? = null) : this() {
         this.id = id
-        this.additionalProperty = additionalProperty
+        this.child = child
+        this.parent = parent
     }
 
-    lateinit var string: String
-    lateinit var additionalProperty: String
-    var nullableProperty: Int? = null
     var id: Long = -1
-    val immutableProperty = 42
+    var child: TargetTestObjectWithCircularReference? = null
+    var parent: TargetTestObjectWithCircularReference? = null
 }

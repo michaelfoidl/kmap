@@ -21,7 +21,7 @@ package at.michaelfoidl.kmap.integrationTest
 
 import at.michaelfoidl.kmap.definition.MappingDefinition
 import at.michaelfoidl.kmap.mapper.Mapper
-import at.michaelfoidl.kmap.test.helpers.*
+import at.michaelfoidl.kmap.testUtils.*
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldEqual

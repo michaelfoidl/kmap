@@ -21,6 +21,7 @@ tests:
   stage: test
   script:
     - ./gradlew test
+    - ./gradlew integrationTest
 
 publish:
   stage: publish

@@ -17,9 +17,9 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.helpers
+package at.michaelfoidl.kmap.testUtils
 
-
-interface Echo {
-    fun <T: Any> echo(value: T): T
-}
+class SourceTestObjectWithoutConstructor(
+        var string: String,
+        var id: Long = -1
+)

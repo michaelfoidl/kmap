@@ -17,12 +17,9 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.extensions
+package at.michaelfoidl.kmap.testUtils
 
-import at.michaelfoidl.kmap.mapper.ConcreteMapper
-
-internal inline fun <SourceT: Any, reified TargetT : Any> ConcreteMapper<SourceT, TargetT>.map(source: SourceT): TargetT {
-    val result = convert<TargetT>(source)
-    execute(result)
-    return result.value!!
-}
+class TargetTestObjectWithoutConstructor(
+        var string: String,
+        var id: Long
+)

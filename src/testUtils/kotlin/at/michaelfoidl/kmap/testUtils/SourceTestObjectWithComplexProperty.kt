@@ -17,15 +17,14 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.helpers
+package at.michaelfoidl.kmap.testUtils
 
-class SourceTestObject private constructor() {
-    constructor(string: String, id: Long): this() {
-        this.string = string
+class SourceTestObjectWithComplexProperty private constructor() {
+    constructor(id: Long, child: SourceTestObjectWithComplexProperty? = null): this() {
         this.id = id
+        this.child = child
     }
 
     var id: Long = -1
-    lateinit var string: String
-    val immutableProperty = 111
+    var child: SourceTestObjectWithComplexProperty? = null
 }

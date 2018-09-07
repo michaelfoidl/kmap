@@ -7,7 +7,7 @@ before_script:
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - /cache
+    - ./cache
 
 stages:
   - build
@@ -17,9 +17,9 @@ stages:
 build:
   stage: build 
   script:
-    - ./gradlew -g /cache assemble
+    - ./gradlew -g ./cache assemble
   artifacts:
-    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
+    name: "$CI_PIPELINE_ID"
     paths:
     - build/libs/
     - build/classes/
@@ -29,14 +29,14 @@ unitTests:
   dependencies:
     - build
   script:
-    - ./gradlew -g /cache test
+    - ./gradlew -g ./cache test
 
 integrationTests:
   stage: test
   dependencies:
     - build
   script:
-    - ./gradlew -g /cache integrationTest
+    - ./gradlew -g ./cache integrationTest
 
 publish:
   stage: publish
@@ -45,4 +45,4 @@ publish:
   dependencies:
     - build
   script:
-    - ./gradlew -g /cache bintrayUpload -Dbintray.user=michaelfoidl -Dbintray.key=$BINTRAY_KEY
+    - ./gradlew -g ./cache bintrayUpload -Dbintray.user=michaelfoidl -Dbintray.key=$BINTRAY_KEY

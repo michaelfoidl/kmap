@@ -5,7 +5,7 @@ before_script:
   - chmod +x ./gradlew
 
 cache:
-  key: ${CI_COMMIT_REF_SLUG}
+  key: "$CI_PIPELINE_ID"
   paths:
     - ./cache
 
@@ -19,7 +19,7 @@ build:
   script:
     - ./gradlew -g ./cache assemble
   artifacts:
-    name: "$CI_PIPELINE_ID"
+    name: ${CI_COMMIT_REF_SLUG}
     paths:
     - build/libs/
     - build/classes/

@@ -6,7 +6,7 @@ apply plugin: 'maven-publish'
 
 buildscript {
     ext {
-        VERSION = '0.1.2'
+        VERSION = '0.2'
 
         kotlin_version = '1.2.61'
         kluent_version = '1.40'

@@ -97,14 +97,16 @@ Therefore, ignoring a property is just a special case of removing it without doi
 
 #### Validation
 
-In order to make sure that the mapping process will work smoothly, you should validate every `MappingDefinition` before using it (in a test):
+In order to make sure that the mapping process will work smoothly, you should validate every `Mapper` before using it (in a test):
 
 ```
-val result = mappingDefinition.validate(SourceTestObject::class, TargetTestObject::class)
+val result = mapper.validateFor(SourceTestObject::class, TargetTestObject::class)
 ```
 
 The resulting `ValidationResult` can be successful, return a warning or an error. A warning suggests that for instance a source property is not converted, but also not ignored or removed or that a target property is not converted or added (but nullable).
 If the above target property is not nullable, validation returns an error since mapping would cause a `NullPointerException`. The validation also fails when either the source type or the target type does not fulfil the requirements for being mappable.
+
+Note that the above validation only validates one possible `MappingDefinition`. The mapper should be tested for all used combinations of source and target classes.
 
 ### Mapping
 
@@ -112,6 +114,12 @@ When you have successfully defined a `Mapper` with a `MappingDefinition`, mappin
 
 ```
 val result = mapper.map<TargetTestObject>(sourceObject)
+```
+
+If you cannot use the inline-function-API using reified parameters, there is the possibility to define the target class explicitly (then it is also possible to use a variable):
+
+```
+val result = mapper.map(sourceObject, TargetTestObject::class)
 ```
 
 ## Bug Reporting
@@ -138,3 +146,7 @@ Feel free to contribute your ideas in form of either:
 - 0.1.2 - Documentation
   - improvements in the documentation
   - README updates
+
+- 0.2 - Testability and API Improvements
+  - support of passing a target class to a mapper instead of using reified parameters
+  - validation for mappers

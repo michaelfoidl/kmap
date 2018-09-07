@@ -3,7 +3,6 @@ image: openjdk:8-jdk
 before_script:
   - export ENV=gitlab-ci
   - chmod +x ./gradlew
-  - export GRADLE_USER_HOME=/cache/.gradle
 
 cache:
   paths:
@@ -18,7 +17,7 @@ stages:
 build:
   stage: build 
   script:
-    - ./gradlew assemble
+    - ./gradlew -g /cache assemble
   artifacts:
     name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
     paths:
@@ -37,7 +36,7 @@ integrationTests:
   dependencies:
     - build
   script:
-    - ./gradlew integrationTest
+    - ./gradlew -g /cache integrationTest
 
 publish:
   stage: publish
@@ -46,4 +45,4 @@ publish:
   dependencies:
     - build
   script:
-    - ./gradlew bintrayUpload -Dbintray.user=michaelfoidl -Dbintray.key=$BINTRAY_KEY
+    - ./gradlew -g /cache bintrayUpload -Dbintray.user=michaelfoidl -Dbintray.key=$BINTRAY_KEY

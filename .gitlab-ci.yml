@@ -4,6 +4,11 @@ before_script:
   - export ENV=gitlab-ci
   - chmod +x ./gradlew
 
+cache:
+  key: "$CI_PIPELINE_ID"
+  paths:
+    - ./cache
+
 stages:
   - build
   - test
@@ -12,19 +17,32 @@ stages:
 build:
   stage: build 
   script:
-    - ./gradlew build
+    - ./gradlew -g ./cache assemble
   artifacts:
+    name: ${CI_COMMIT_REF_SLUG}
     paths:
     - build/libs/
+    - build/classes/
 
-tests:
+unitTests:
   stage: test
+  dependencies:
+    - build
   script:
-    - ./gradlew test
+    - ./gradlew -g ./cache test
+
+integrationTests:
+  stage: test
+  dependencies:
+    - build
+  script:
+    - ./gradlew -g ./cache integrationTest
 
 publish:
   stage: publish
   only:
     - master
+  dependencies:
+    - build
   script:
-    - ./gradlew bintrayUpload -Dbintray.user=michaelfoidl -Dbintray.key=$BINTRAY_KEY
+    - ./gradlew -g ./cache bintrayUpload -Dbintray.user=michaelfoidl -Dbintray.key=$BINTRAY_KEY

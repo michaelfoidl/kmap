@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.2
+ * version 0.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -17,12 +17,16 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.extensions
+package at.michaelfoidl.kmap.testUtils
 
-import at.michaelfoidl.kmap.mapper.ConcreteMapper
+class SourceTestObjectWithCircularReference private constructor() {
+    constructor(id: Long, child: SourceTestObjectWithCircularReference? = null, parent: SourceTestObjectWithCircularReference? = null): this() {
+        this.id = id
+        this.child = child
+        this.parent = parent
+    }
 
-internal inline fun <SourceT: Any, reified TargetT : Any> ConcreteMapper<SourceT, TargetT>.map(source: SourceT): TargetT {
-    val result = convert<TargetT>(source)
-    execute(result)
-    return result.value!!
+    var id: Long = -1
+    var child: SourceTestObjectWithCircularReference? = null
+    var parent: SourceTestObjectWithCircularReference? = null
 }

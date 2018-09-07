@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.2
+ * version 0.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -17,15 +17,14 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.helpers
+package at.michaelfoidl.kmap.testUtils
 
-class SourceTestObject private constructor() {
-    constructor(string: String, id: Long): this() {
-        this.string = string
+class TargetTestObjectWithComplexProperty private constructor() {
+    constructor(id: Long, child: TargetTestObjectWithComplexProperty? = null) : this() {
         this.id = id
+        this.child = child
     }
 
     var id: Long = -1
-    lateinit var string: String
-    val immutableProperty = 111
+    var child: TargetTestObjectWithComplexProperty? = null
 }

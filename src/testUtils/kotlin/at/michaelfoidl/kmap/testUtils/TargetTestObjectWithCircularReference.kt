@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.2
+ * version 0.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -17,9 +17,16 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.helpers
+package at.michaelfoidl.kmap.testUtils
 
+class TargetTestObjectWithCircularReference private constructor() {
+    constructor(id: Long, child: TargetTestObjectWithCircularReference? = null, parent: TargetTestObjectWithCircularReference? = null) : this() {
+        this.id = id
+        this.child = child
+        this.parent = parent
+    }
 
-interface Echo {
-    fun <T: Any> echo(value: T): T
+    var id: Long = -1
+    var child: TargetTestObjectWithCircularReference? = null
+    var parent: TargetTestObjectWithCircularReference? = null
 }

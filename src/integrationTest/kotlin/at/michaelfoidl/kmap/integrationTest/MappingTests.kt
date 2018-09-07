@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.2
+ * version 0.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -21,7 +21,7 @@ package at.michaelfoidl.kmap.integrationTest
 
 import at.michaelfoidl.kmap.definition.MappingDefinition
 import at.michaelfoidl.kmap.mapper.Mapper
-import at.michaelfoidl.kmap.test.helpers.*
+import at.michaelfoidl.kmap.testUtils.*
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldEqual
@@ -65,7 +65,7 @@ class MappingTests {
     }
 
     @Test
-    fun validMappingDefinition_mappingWithConvertedPropertyAndAutoCast_shouldBeSuccessful() {
+    fun validMapper_mappingWithConvertedPropertyAndAutoCast_shouldBeSuccessful() {
 
         // Arrange
         val mapper = object : Mapper() {
@@ -88,7 +88,7 @@ class MappingTests {
     }
 
     @Test
-    fun validMappingDefinition_mappingWithConvertedPropertyAndConversionFunction_shouldBeSuccessful() {
+    fun validMapper_mappingWithConvertedPropertyAndConversionFunction_shouldBeSuccessful() {
 
         // Arrange
         val mapper = object : Mapper() {
@@ -115,7 +115,7 @@ class MappingTests {
     }
 
     @Test
-    fun validMappingDefinition_mappingWithConvertedPropertyAndDefaultValueFunction_shouldBeSuccessful() {
+    fun validMapper_mappingWithConvertedPropertyAndDefaultValueFunction_shouldBeSuccessful() {
 
         // Arrange
         val mapper = object : Mapper() {
@@ -132,7 +132,7 @@ class MappingTests {
             }
 
         }
-        val sourceObject = SourceTestObject("Test", 123)
+        val sourceObject = TargetTestObject("Test", 123, "additional")
 
         // Act
         val result = mapper.map<SourceTestObject>(sourceObject)
@@ -143,7 +143,7 @@ class MappingTests {
     }
 
     @Test
-    fun validMappingDefinition_mappingWithConvertedPropertyAndMapper_shouldBeSuccessful() {
+    fun validMapper_mappingWithConvertedPropertyAndMapper_shouldBeSuccessful() {
 
         // Arrange
         val mapper = object : Mapper() {
@@ -168,7 +168,7 @@ class MappingTests {
     }
 
     @Test
-    fun validMappingDefinition_mappingWithAddedProperty_shouldBeSuccessful() {
+    fun validMapper_mappingWithAddedProperty_shouldBeSuccessful() {
 
         val mapper = object : Mapper() {
             override fun provideDefinitions(): List<MappingDefinition<*, *>> {
@@ -186,11 +186,11 @@ class MappingTests {
 
         // Assert
         result shouldNotBe null
-        result.additionalProperty shouldEqual "Hi"
+        result.additionalProperty shouldEqual "Hi!"
     }
 
     @Test
-    fun validMappingDefintion_mappingWithRemovedProperty_shouldBeSuccessful() {
+    fun validMapper_mappingWithRemovedProperty_shouldBeSuccessful() {
 
         // Arrange
         var dummy: String? = ""
@@ -217,7 +217,7 @@ class MappingTests {
     }
 
     @Test
-    fun validMappingDefintion_mappingWithIgnoredProperty_shouldBeSuccessful() {
+    fun validMapper_mappingWithIgnoredProperty_shouldBeSuccessful() {
 
         // Arrange
         val mapper = object : Mapper() {
@@ -323,5 +323,30 @@ class MappingTests {
         result.child shouldNotBe null
         result.child!!.child shouldBe null
         result.child!!.parent shouldEqual result
+    }
+
+    @Test
+    fun validMapper_validatingValidMappingDefinition_shouldBeSuccessful() {
+
+        // Arrange
+        val mapper = object : Mapper() {
+            override fun provideDefinitions(): List<MappingDefinition<*, *>> {
+                return listOf(
+                        MappingDefinition(SourceTestObject::class, TargetTestObject::class)
+                                .convert({ it::id }, { it::id })
+                                .convert({ it::string }, { it::string })
+                                .add({ it::additionalProperty }, { "Test" })
+                                .add({ it::nullableProperty }, { null })
+                                .ignore { it::immutableProperty }
+                )
+            }
+
+        }
+
+        // Act
+        val result = mapper.validateFor(SourceTestObject::class, TargetTestObject::class)
+
+        // Assert
+        result.isSuccess() shouldBe true
     }
 }

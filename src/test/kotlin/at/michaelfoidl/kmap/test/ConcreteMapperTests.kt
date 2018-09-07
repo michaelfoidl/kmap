@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.2
+ * version 0.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -24,11 +24,7 @@ import at.michaelfoidl.kmap.definition.MappingDefinition
 import at.michaelfoidl.kmap.exceptions.MappingException
 import at.michaelfoidl.kmap.initializable.Initializable
 import at.michaelfoidl.kmap.mapper.ConcreteMapper
-import at.michaelfoidl.kmap.test.extensions.map
-import at.michaelfoidl.kmap.test.helpers.SourceTestObject
-import at.michaelfoidl.kmap.test.helpers.TargetTestObject
-import at.michaelfoidl.kmap.test.helpers.TargetTestObjectWithPrivateConstructor
-import at.michaelfoidl.kmap.test.helpers.TargetTestObjectWithoutConstructor
+import at.michaelfoidl.kmap.testUtils.*
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import org.amshove.kluent.*
@@ -39,6 +35,12 @@ import kotlin.reflect.KClass
 class ConcreteMapperTests {
 
     private val mappingCacheMock: MappingCache = mock()
+
+    private inline fun <SourceT: Any, reified TargetT : Any> ConcreteMapper<SourceT, TargetT>.map(source: SourceT): TargetT {
+        val result = convert<TargetT>(source)
+        execute(result)
+        return result.value!!
+    }
 
     @BeforeEach
     fun setup() {

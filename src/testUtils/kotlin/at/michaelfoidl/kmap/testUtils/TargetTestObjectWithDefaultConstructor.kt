@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.2
+ * version 0.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -17,14 +17,9 @@
  * limitations under the License.
  */
 
-package at.michaelfoidl.kmap.test.helpers
+package at.michaelfoidl.kmap.testUtils
 
-class TargetTestObjectWithPrivateConstructor private constructor() {
-    constructor(string: String, id: Long) : this() {
-        this.string = string
-        this.id = id
-    }
-
-    lateinit var string: String
-    var id: Long = -1
-}
+class TargetTestObjectWithDefaultConstructor(
+        var string: String = "",
+        var id: Long = 0
+)

@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.2
+ * version 0.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -20,7 +20,7 @@
 package at.michaelfoidl.kmap.test
 
 import at.michaelfoidl.kmap.definition.MappingDefinition
-import at.michaelfoidl.kmap.test.helpers.*
+import at.michaelfoidl.kmap.testUtils.*
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldEqual
 import org.junit.jupiter.api.Test

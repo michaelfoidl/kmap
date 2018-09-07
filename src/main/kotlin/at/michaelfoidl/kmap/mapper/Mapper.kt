@@ -1,6 +1,6 @@
 /*
  * kmap
- * version 0.1.2
+ * version 0.2
  *
  * Copyright (c) 2018, Michael Foidl
  *
@@ -21,6 +21,7 @@ package at.michaelfoidl.kmap.mapper
 
 import at.michaelfoidl.kmap.exceptions.MappingException
 import at.michaelfoidl.kmap.definition.MappingDefinition
+import at.michaelfoidl.kmap.validation.ValidationResult
 import kotlin.reflect.KClass
 
 
@@ -46,10 +47,44 @@ abstract class Mapper {
      * @return the mapped object.
      */
     inline fun <reified TargetT : Any> map(source: Any): TargetT {
-        val concreteMapper = this.mapperProvider.provideMapper(source::class, TargetT::class, source)
-        val result = concreteMapper.convert<TargetT>(source)
-        concreteMapper.execute(result)
+        return map(source, TargetT::class)
+    }
+
+    /**
+     * Maps the given source object to the given target class.
+     *
+     * @param source the source object to be mapped.
+     * @param targetClass the class of the target object.
+     * @return the mapped object.
+     */
+    fun <TargetT : Any> map(source: Any, targetClass: KClass<TargetT>): TargetT {
+        val concreteMapper = this.mapperProvider.provideMapper(source::class, targetClass, source)
+        val result = concreteMapper.convert(source, targetClass)
+        concreteMapper.execute(result, targetClass)
         return result.value!!
+    }
+
+    /**
+     * Searches for the [MappingDefinition] capable of mapping an object of the given source class to an object of the
+     * given target class and validates it.
+     *
+     * @param sourceClass the class of the source object the definition should be found and validated for.
+     * @param targetClass the class of the target object the definition should be found and validated for.
+     * @return the result of the validation process.
+     */
+    fun <SourceT : Any, TargetT : Any> validateFor(sourceClass: KClass<SourceT>, targetClass: KClass<TargetT>): ValidationResult {
+        return findDefinition(sourceClass, targetClass)
+                .validate(sourceClass, targetClass)
+    }
+
+    /**
+     * Searches for the [MappingDefinition] capable of mapping an object of the defined source type to an object of the
+     * defined target type and validates it.
+     *
+     * @return the result of the validation process.
+     */
+    inline fun <reified SourceT: Any, reified TargetT: Any> validateFor(): ValidationResult {
+        return validateFor(SourceT::class, TargetT::class)
     }
 
     /**
@@ -62,9 +97,14 @@ abstract class Mapper {
      * @throws MappingException if there is no [MappingDefinition] matching the requirements.
      */
     @PublishedApi
-    internal fun findDefinition(sourceClass: KClass<*>, targetClass: KClass<*>): MappingDefinition<*, *> {
-        return provideDefinitions().find { it.doesApply(sourceClass, targetClass) }
-                ?: throw MappingException("There is no mapping definition specified for mapping " + sourceClass.qualifiedName + " to " + targetClass.qualifiedName + "")
+    internal fun <SourceT : Any, TargetT : Any> findDefinition(sourceClass: KClass<SourceT>, targetClass: KClass<TargetT>): MappingDefinition<SourceT, TargetT> {
+        val definition = provideDefinitions().find { it.doesApply(sourceClass, targetClass) }
+        if (definition != null) {
+            @Suppress("UNCHECKED_CAST")
+            return definition as MappingDefinition<SourceT, TargetT>
+        } else {
+            throw MappingException("There is no mapping definition specified for mapping " + sourceClass.qualifiedName + " to " + targetClass.qualifiedName + "")
+        }
     }
 
     /**

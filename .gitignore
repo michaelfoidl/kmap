@@ -70,7 +70,7 @@ fabric.properties
 *.iml
 # modules.xml
 # .idea/misc.xml
-# *.ipr
+*.ipr
 
 # Sonarlint plugin
 .idea/sonarlint
